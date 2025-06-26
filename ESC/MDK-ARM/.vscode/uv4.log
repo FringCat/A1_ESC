@@ -1,0 +1,13 @@
+*** Using Compiler 'V5.06 update 5 (build 528)', folder: 'C:\Keil5 MDK 1\ARM\ARMCC\Bin'
+Build target 'ESC'
+compiling ADRC.c...
+..\others\ADRC.c(14): warning:  #223-D: function "memset" declared implicitly
+      memset(ADRC,0,sizeof(ADRC_t));
+..\others\ADRC.c(213): warning:  #1035-D: single-precision operand implicitly converted to double-precision
+      float fh =  (2*(e2[0]-e1)*r)/(3.1415926*(1+r*r*(1/e1)*(1/e1)*(1/e1)*(1/e1)));
+..\others\ADRC.c: 2 warnings, 0 errors
+linking...
+Program Size: Code=27250 RO-data=1006 RW-data=224 ZI-data=2112  
+FromELF: creating hex file...
+"ESC\ESC.axf" - 0 Error(s), 2 Warning(s).
+Build Time Elapsed:  00:00:04

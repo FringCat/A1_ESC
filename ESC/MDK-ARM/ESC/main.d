@@ -1,0 +1,51 @@
+esc\main.o: ../Core/Src/main.c
+esc\main.o: ../Core/Inc/main.h
+esc\main.o: ../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_hal.h
+esc\main.o: ../Core/Inc/stm32g4xx_hal_conf.h
+esc\main.o: ../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_hal_rcc.h
+esc\main.o: ../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_hal_def.h
+esc\main.o: ../Drivers/CMSIS/Device/ST/STM32G4xx/Include/stm32g4xx.h
+esc\main.o: ../Drivers/CMSIS/Device/ST/STM32G4xx/Include/stm32g431xx.h
+esc\main.o: ../Drivers/CMSIS/Include/core_cm4.h
+esc\main.o: C:\Keil5 MDK 1\ARM\ARMCC\Bin\..\include\stdint.h
+esc\main.o: ../Drivers/CMSIS/Include/cmsis_version.h
+esc\main.o: ../Drivers/CMSIS/Include/cmsis_compiler.h
+esc\main.o: ../Drivers/CMSIS/Include/cmsis_armcc.h
+esc\main.o: ../Drivers/CMSIS/Include/mpu_armv7.h
+esc\main.o: ../Drivers/CMSIS/Device/ST/STM32G4xx/Include/system_stm32g4xx.h
+esc\main.o: ../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_hal.h
+esc\main.o: ../Drivers/STM32G4xx_HAL_Driver/Inc/Legacy/stm32_hal_legacy.h
+esc\main.o: C:\Keil5 MDK 1\ARM\ARMCC\Bin\..\include\stddef.h
+esc\main.o: ../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_hal_rcc_ex.h
+esc\main.o: ../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_hal_gpio.h
+esc\main.o: ../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_hal_gpio_ex.h
+esc\main.o: ../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_hal_dma.h
+esc\main.o: ../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_hal_dma_ex.h
+esc\main.o: ../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_hal_cortex.h
+esc\main.o: ../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_hal_adc.h
+esc\main.o: ../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_ll_adc.h
+esc\main.o: ../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_hal_adc_ex.h
+esc\main.o: ../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_hal_exti.h
+esc\main.o: ../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_hal_fdcan.h
+esc\main.o: ../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_hal_flash.h
+esc\main.o: ../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_hal_flash_ex.h
+esc\main.o: ../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_hal_flash_ramfunc.h
+esc\main.o: ../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_hal_pwr.h
+esc\main.o: ../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_hal_pwr_ex.h
+esc\main.o: ../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_hal_spi.h
+esc\main.o: ../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_hal_spi_ex.h
+esc\main.o: ../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_hal_tim.h
+esc\main.o: ../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_hal_tim_ex.h
+esc\main.o: ../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_hal_uart.h
+esc\main.o: ../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_hal_uart_ex.h
+esc\main.o: ../Core/Inc/adc.h
+esc\main.o: ../Core/Inc/fdcan.h
+esc\main.o: ../Core/Inc/spi.h
+esc\main.o: ../Core/Inc/tim.h
+esc\main.o: ../Core/Inc/usart.h
+esc\main.o: ../Core/Inc/gpio.h
+esc\main.o: C:\Keil5 MDK 1\ARM\ARMCC\Bin\..\include\stdio.h
+esc\main.o: ../../ESC/./others/as5047p.h
+esc\main.o: ../../ESC/./others/FOC.h
+esc\main.o: C:\Keil5 MDK 1\ARM\ARMCC\Bin\..\include\math.h
+esc\main.o: ../../ESC/./others/ADRC.h

@@ -1,0 +1,25 @@
+{
+    "files.associations": {
+        "main.h": "c",
+        "adc.h": "c",
+        "as5047p.h": "c",
+        "stdio.h": "c",
+        "foc.h": "c",
+        "tim.h": "c",
+        "adrc.h": "c",
+        "cctype": "c",
+        "cfloat": "c",
+        "cstddef": "c",
+        "cstdint": "c",
+        "cstdio": "c",
+        "cstdlib": "c",
+        "cstring": "c",
+        "ctime": "c",
+        "cwchar": "c",
+        "exception": "c",
+        "new": "c",
+        "typeinfo": "c",
+        "*.rh": "c",
+        "atomic": "c"
+    }
+}
