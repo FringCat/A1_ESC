@@ -665,12 +665,11 @@ ARM Macro Assembler    Page 11
   422 0000001C                 END
               00000000 
               00000000 
-Command Line: --debug --xref --diag_suppress=9931 --cpu=Cortex-M4.fp.sp --apcs=
-interwork --depend=esc\startup_stm32g431xx.d -oesc\startup_stm32g431xx.o -I.\RT
-E\_ESC -I"C:\Keil5 MDK 1\ARM\PACK\ARM\CMSIS\6.1.0\CMSIS\Core\Include" --predefi
-ne="__MICROLIB SETA 1" --predefine="__UVISION_VERSION SETA 540" --predefine="ST
-M32G431xx SETA 1" --predefine="_RTE_ SETA 1" --list=startup_stm32g431xx.lst sta
-rtup_stm32g431xx.s
+Command Line: --debug --xref --diag_suppress=9931 --cpu=Cortex-M4.fp --apcs=int
+erwork --depend=esc\startup_stm32g431xx.d -oesc\startup_stm32g431xx.o -I.\RTE\_
+ESC -IC:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.1\CMSIS\Include --predefine="__EVAL SET
+A 1" --predefine="__MICROLIB SETA 1" --predefine="__UVISION_VERSION SETA 524" -
+-predefine="_RTE_ SETA 1" --list=startup_stm32g431xx.lst startup_stm32g431xx.s
 
 
 

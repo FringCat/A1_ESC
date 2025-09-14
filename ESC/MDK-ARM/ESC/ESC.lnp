@@ -1,8 +1,9 @@
---cpu=Cortex-M4.fp.sp
+--cpu=Cortex-M4.fp
 "esc\startup_stm32g431xx.o"
 "esc\main.o"
 "esc\gpio.o"
 "esc\adc.o"
+"esc\dma.o"
 "esc\fdcan.o"
 "esc\spi.o"
 "esc\tim.o"
@@ -36,6 +37,8 @@
 "esc\as5047p.o"
 "esc\foc.o"
 "esc\adrc.o"
+"esc\foc_alg.o"
+"esc\foc_drv.o"
 --library_type=microlib --strict --scatter "ESC\ESC.sct"
 --summary_stderr --info summarysizes --map --load_addr_map_info --xref --callgraph --symbols
 --info sizes --info totals --info unused --info veneers
