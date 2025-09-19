@@ -23,11 +23,12 @@ void ADRC_Init(ADRC_t* ADRC)
     ADRC->ESO.b = 1000.9 ;
 
     ADRC->NLSEF.k1 = 2.0 ;
-    ADRC->NLSEF.k2 = 0.0 ;
-    ADRC->NLSEF.a1 = 0.8 ;
-    ADRC->NLSEF.a2 = 0.5 ;
-    ADRC->NLSEF.r1 = 10.8 ;
-    ADRC->NLSEF.r2 = 0.2 ;
+    ADRC->NLSEF.a1 = 0.54 ;
+    ADRC->NLSEF.r1 = 1.8 ;
+
+    ADRC->NLSEF.k2 = 0.5 ;
+    ADRC->NLSEF.a2 = 0.3 ;
+    ADRC->NLSEF.r2 = 3.2 ;
     
 }
 
@@ -231,10 +232,25 @@ float fal(float e,float a,float r)
         return pow(fabs(e),a)*sgn(e);
     }
 }
-float NLSEF1(ADRC_t* ADRC)
+
+
+float NLSEF(ADRC_t* ADRC)
 {
     // ADRC->NLSEF.output = ADRC->NLSEF.k1*fal(ADRC->TD.v[0]-ADRC->ESO.z[0],ADRC->NLSEF.a1,ADRC->NLSEF.r1)+ADRC->NLSEF.k2*fal(ADRC->TD.v[1]-ADRC->ESO.z[1],ADRC->NLSEF.a2,ADRC->NLSEF.r2)+ADRC->ESO.z[2]/ADRC->ESO.b;
-    ADRC->NLSEF.output = ADRC->NLSEF.k1*fal(ADRC->TD.v[0]-ADRC->ESO.z[0],ADRC->NLSEF.a1,ADRC->NLSEF.r1);
+    ADRC->NLSEF.output = ADRC->NLSEF.k1*fal(ADRC->TD.v[0]-ADRC->ESO.z[0],ADRC->NLSEF.a1,ADRC->NLSEF.r1)+ADRC->ESO.z[2]/ADRC->ESO.b;
+    return ADRC->NLSEF.output;
+}
+
+
+
+float NLSEF_I(ADRC_t* ADRC)
+{
+    static float k3 = 3;
+    static float a3 = 0.6;
+    static float r3 = 4.1;
+    static float integral = 0 ; 
+    integral += k3*fal(ADRC->TD.v[0]-ADRC->ESO.z[0],a3,r3)*ADRC->TD.h;
+    ADRC->NLSEF.output = ADRC->NLSEF.k1*fal(ADRC->TD.v[0]-ADRC->ESO.z[0],ADRC->NLSEF.a1,ADRC->NLSEF.r1) + ADRC->NLSEF.k2*fal(ADRC->TD.v[1]-ADRC->ESO.z[1],ADRC->NLSEF.a2,ADRC->NLSEF.r2) + integral + ADRC->ESO.z[2]/ADRC->ESO.b;
     return ADRC->NLSEF.output;
 }
 // float NLSEF1(ADRC_t* ADRC)

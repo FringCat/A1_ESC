@@ -22,22 +22,15 @@ Motor_t Motor;
 
 void DriftOffsets(void)
 {
-	// uint16_t detect_rounds = 100;
-	// for(int i = 0; i < detect_rounds; i++)
-	// {
-	// 	Motor.IA_offset += ((double)(adc_convert(ADC0_CH0_A0))*I_ADC_CONV);
-	// 	Motor.IB_offset += ((double)(adc_convert(ADC0_CH6_A6))*I_ADC_CONV);
-	// 	Motor.IC_offset += ((double)(adc_convert(ADC0_CH3_A3))*I_ADC_CONV);
-	// 	Motor2.IA_offset += ((double)(adc_convert(ADC1_CH0_A8))*I_ADC_CONV);
-	// 	Motor2.IB_offset += ((double)(adc_convert(ADC1_CH2_A10))*I_ADC_CONV);
-	// 	Motor2.IC_offset += ((double)(adc_convert(ADC1_CH3_A11))*I_ADC_CONV);
-	// }
-	// Motor.IA_offset = Motor.IA_offset / detect_rounds;
-	// Motor.IB_offset = Motor.IB_offset / detect_rounds;
-	// Motor.IC_offset = Motor.IC_offset / detect_rounds;
-	// Motor2.IA_offset = Motor2.IA_offset / detect_rounds;
-	// Motor2.IB_offset = Motor2.IB_offset / detect_rounds;
-	// Motor2.IC_offset = Motor2.IC_offset / detect_rounds;
+	uint16_t detect_rounds = 100;
+	for(int i = 0; i < detect_rounds; i++)
+	{
+		Motor.IA_offset += ((double)(HAL_ADC_GetValue(&hadc1))*I_ADC_CONV);
+		Motor.IB_offset += ((double)(HAL_ADC_GetValue(&hadc1))*I_ADC_CONV);
+
+	}
+	Motor.IA_offset = Motor.IA_offset / detect_rounds;
+	Motor.IB_offset = Motor.IB_offset / detect_rounds;
 
 }
 
@@ -46,7 +39,7 @@ void SetMotor_Velocity(float Velocity_motor)
 	Motor.time.dt = Motor.Getdt(&Motor.time);
 	float Iq1 = PID_velocity(&Motor,Velocity_motor);
 	SVPWM(&Motor,Iq1,GetElectricalAngle(&Motor));
-	printf("%f,%f\n",Motor.Velocity,Iq1);
+	// printf("%f,%f\n",Motor.Velocity,Iq1);
 }
 
 void FOCparamInit(Motor_t* motor) 
@@ -80,21 +73,16 @@ double Getdt(Time_t* time)
     
 	return  time->dt ;
 }
-
 void FOC_SetPWM(uint16_t a,uint16_t b,uint16_t c)
 {
-
 	__HAL_TIM_SET_COMPARE(&htim1,TIM_CHANNEL_1,a);
 	__HAL_TIM_SET_COMPARE(&htim1,TIM_CHANNEL_2,b);
 	__HAL_TIM_SET_COMPARE(&htim1,TIM_CHANNEL_3,c);
 }
-
-
 void FOC_Delayms(uint16_t ms)
 {
 	HAL_Delay(ms);
 }
-
 float FOC_GetAngle_Sensor(void)
 {
 	return GetAngle(); //AS5047p
@@ -194,15 +182,7 @@ float sgn(float x)
 		return 0 ;
 	}
 }
-// float Sat(float s, float delta)
-// {
-//     if(s > delta)
-//         return 1.0;
-//     else if(s < -delta)
-//         return -1.0;
-//     else if(s == delta)
-//         return s/delta;
-// }
+
 float Sat(float e, float r) 
 {
     if (e > r) {
@@ -377,8 +357,6 @@ void SPWM(Motor_t* motor,float Ua , float Ub ,float Uc)
 	motor->SetPWM((uint16_t)(_Ua*A_PWM_Period),(uint16_t)(_Ub*B_PWM_Period),(uint16_t)(_Uc*C_PWM_Period));//设置ABC三相占空比
 }
 
-
-
 void FOC_SPWM(Motor_t* motor,float Uq,float angle)
 {
 	float *Upark_N;                                    
@@ -525,7 +503,7 @@ float GetVelocity_(Motor_t* motor)
 	return motor->Velocity;
 }
 
-float  PID_velocity(Motor_t* motor,float TargetVelocity)
+float PID_velocity(Motor_t* motor,float TargetVelocity)
 {
 	// static float Kp = 0.008 ;//
 	// static float Ki = 0.03 ;//

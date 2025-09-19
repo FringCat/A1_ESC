@@ -51,3 +51,7 @@ float GetAngle(void)
 	return angle;
 }
  
+uint32_t AS5047P_GetAngle(void)
+{
+	return AS5047_read(0x3FFE);
+}

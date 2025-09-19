@@ -20,7 +20,7 @@ typedef struct
 typedef struct
 {
 	float KP,KI,This_I,Last_I,KD;
-	float error,Output,last_error;
+	float error,Output,last_error; 
 }PID_t;
 
 typedef void (*Function_SetPWM)(uint16_t,uint16_t,uint16_t);
