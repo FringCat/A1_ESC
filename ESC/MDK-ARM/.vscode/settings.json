@@ -20,6 +20,9 @@
         "new": "c",
         "typeinfo": "c",
         "*.rh": "c",
-        "atomic": "c"
+        "atomic": "c",
+        "math.h": "c",
+        "foc_alg.h": "c",
+        "stdint.h": "c"
     }
 }

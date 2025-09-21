@@ -42,13 +42,13 @@ typedef struct
     float k2;
 
     float output;//Êä³ö
-}NLSEF1_t;
+}NLSEF_t;
 
 typedef struct 
 {
     ESO_t ESO;
     TD_t TD;
-    NLSEF1_t NLSEF;
+    NLSEF_t NLSEF;
 }ADRC_t;
 
 int factorial(int n);
@@ -57,6 +57,6 @@ void ESO(ADRC_t* ADRC,float y);
 float fhan1(float e1 , float* e2,float r ,float h,int order);
 void TD(ADRC_t* ADRC,float v0);
 float fal(float e,float a,float r);
-float NLSEF1(ADRC_t* ADRC);
-
+float NLSEF(ADRC_t* ADRC);
+float NLSEF_I(ADRC_t* ADRC);
 #endif // ! 
