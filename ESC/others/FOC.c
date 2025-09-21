@@ -1,7 +1,7 @@
 #include "as5047p.h"
 #include "FOC.h"
 extern TIM_HandleTypeDef htim1;
-/*===================================================ÒÆÖ²Ê±ĞèÒªĞŞ¸ÄµÄ²¿·Ö==============================================================*/
+/*===================================================ç§»æ¤æ—¶éœ€è¦ä¿®æ”¹çš„éƒ¨åˆ†==============================================================*/
 #define Upower 24.0f
 #define Ipower 24.0f
 #define A_PWM_Period 4250
@@ -46,10 +46,10 @@ void FOCparamInit(Motor_t* motor)
 {
     if (&motor == NULL) 
 	{
-        return; // È·±£´«ÈëµÄÖ¸ÕëÓĞĞ§
+        return; // ç¡®ä¿ä¼ å…¥çš„æŒ‡é’ˆæœ‰æ•ˆ
     }
 
-    // Ê¹ÓÃ memset ½«Õû¸ö½á¹¹ÌåÇåÁã
+    // ä½¿ç”¨ memset å°†æ•´ä¸ªç»“æ„ä½“æ¸…é›¶
     memset(&motor, 0, sizeof(Motor_t*));
 }
 
@@ -117,7 +117,7 @@ void FOC_init(void)
 	Motor.angle_el_zero = 0.517368;//2.540426;
 
 	Motor.motor_number = 1;
-	Motor.DIR = -1 ;//µç»ú1µ¥ËÙ¶È»·
+	Motor.DIR = -1 ;//ç”µæœº1å•é€Ÿåº¦ç¯
 	Motor.PID_param[0].KP= 0.3;
 	Motor.PID_param[0].KI= 0.1;
 	Motor.T = 0.01;
@@ -127,14 +127,14 @@ void FOC_init(void)
 	Motor.PID_param[1].KI= 4.8;
 	Motor.PID_param[1].KD= 0.0;	
 
-	Motor.PID_param[2].KP= 2.0;//µç»ú1Èı»·ËÙ¶È»·
+	Motor.PID_param[2].KP= 2.0;//ç”µæœº1ä¸‰ç¯é€Ÿåº¦ç¯
 	Motor.PID_param[2].KI= 0.0;
 
-	Motor.PID_param[3].KP= 0.4;//µç»ú1Èı»·½Ç¶È»·
+	Motor.PID_param[3].KP= 0.4;//ç”µæœº1ä¸‰ç¯è§’åº¦ç¯
 	Motor.PID_param[3].KI= 0.0;
 	Motor.PID_param[3].KD= 0.0;
 
-	Motor.PID_param[4].KP= 154.0;//µç»ú1Èı»·½ÇËÙ¶È»·  p0.126
+	Motor.PID_param[4].KP= 154.0;//ç”µæœº1ä¸‰ç¯è§’é€Ÿåº¦ç¯  p0.126
 	Motor.PID_param[4].KI= 0.0;
 	Motor.PID_param[4].KD= 0.00;
 
@@ -213,56 +213,56 @@ float mymap( float Data ,float formLOW,float formHIGH, float toLOW,float toHIGH)
 float Limit_ElectricalAngle(float ElectricalAngle)
 {
 	/*
-	µç½Ç¶ÈÏŞÖÆº¯Êı£¬ÓÃÓÚ½«»ñÈ¡µ½µÄ½Ç¶ÈÖµÍ¨Í¨ÏŞÖÆÔÚ 2¦ĞÖ®ÄÚ£¬
-	Ò»·½Ãæ¼õÉÙ¼ÆËãÁ¿£¬¸üÖØÒªµÄÊÇ·ÀÖ¹ÓÉÓÚËæ×Åµç»úĞı×ªÈ¦ÊıµÄÔö¼Ó£¬
-	·´À¡»ØÀ´µÄ½Ç¶ÈÖµÎŞÏŞÖÆµØµş¼Ó£¬Ê¹µÃ´æ·Å½Ç¶ÈÖµµÄ±äÁ¿·¢ÉúÒç³ö£¬ÕâÊÇºÜÎ£ÏÕµÄ.
-	ÑÔ¹éÕı´«£¬Ö»ÒªÊ±¿Ì¶Ô´æ·Å½Ç¶ÈÖµµÄ±äÁ¿½øĞĞÒÔ 2¦Ğ Îªµ¥Î»µÄÈ¡Óà£¬¾Í¿ÉÒÔÈÃ¸Ã±äÁ¿±£³ÖÔÚ 2¦Ğ Ö®ÄÚ £¬·ÀÖ¹Òç³ö.
-	ÏŞÖÆµÄÊµÏÖË¼Â·¾ÍºÃ±È°ÑÄ³¸öÕıÏÒÖµ 2k¦Ğ+ a ÖĞµÄ a ÌáÈ¡³öÀ´----°Ñ2k¦Ğ¸øÈ¡Óàµô.
-	º¯ÊıÊäÈë µç»ú½Ç¶È»òµç½Ç¶È(angle) £¬·µ»Ø floatÀàĞÍµÄÈ¡ÓàÏŞÖÆºóµÄ½Ç¶ÈÖµ .
+	ç”µè§’åº¦é™åˆ¶å‡½æ•°ï¼Œç”¨äºå°†è·å–åˆ°çš„è§’åº¦å€¼é€šé€šé™åˆ¶åœ¨ 2Ï€ä¹‹å†…ï¼Œ
+	ä¸€æ–¹é¢å‡å°‘è®¡ç®—é‡ï¼Œæ›´é‡è¦çš„æ˜¯é˜²æ­¢ç”±äºéšç€ç”µæœºæ—‹è½¬åœˆæ•°çš„å¢åŠ ï¼Œ
+	åé¦ˆå›æ¥çš„è§’åº¦å€¼æ— é™åˆ¶åœ°å åŠ ï¼Œä½¿å¾—å­˜æ”¾è§’åº¦å€¼çš„å˜é‡å‘ç”Ÿæº¢å‡ºï¼Œè¿™æ˜¯å¾ˆå±é™©çš„.
+	è¨€å½’æ­£ä¼ ï¼Œåªè¦æ—¶åˆ»å¯¹å­˜æ”¾è§’åº¦å€¼çš„å˜é‡è¿›è¡Œä»¥ 2Ï€ ä¸ºå•ä½çš„å–ä½™ï¼Œå°±å¯ä»¥è®©è¯¥å˜é‡ä¿æŒåœ¨ 2Ï€ ä¹‹å†… ï¼Œé˜²æ­¢æº¢å‡º.
+	é™åˆ¶çš„å®ç°æ€è·¯å°±å¥½æ¯”æŠŠæŸä¸ªæ­£å¼¦å€¼ 2kÏ€+ a ä¸­çš„ a æå–å‡ºæ¥----æŠŠ2kÏ€ç»™å–ä½™æ‰.
+	å‡½æ•°è¾“å…¥ ç”µæœºè§’åº¦æˆ–ç”µè§’åº¦(angle) ï¼Œè¿”å› floatç±»å‹çš„å–ä½™é™åˆ¶åçš„è§’åº¦å€¼ .
 	*/
 	
-  float a = fmod(ElectricalAngle, 2*PI);    //¶ÔÊäÈëµÄ½Ç¶È(angle)½øĞĞÒÔ 2¦ĞÎªµ¥Î»µÄÈ¡Óà£¬fmod ÊÇÈ¡Óàº¯Êı£¬
-	                                //Æä¹¦ÄÜÀàËÆCÓïÑÔµÄÈ¡Óà·ûºÅ¡°%¡±£¬·µ»ØÖµÊÇÈ¡ÓàºóÔÚ 2¦ĞÖ®ÄÚ µÄÖµ.
+  float a = fmod(ElectricalAngle, 2*PI);    //å¯¹è¾“å…¥çš„è§’åº¦(angle)è¿›è¡Œä»¥ 2Ï€ä¸ºå•ä½çš„å–ä½™ï¼Œfmod æ˜¯å–ä½™å‡½æ•°ï¼Œ
+	                                //å…¶åŠŸèƒ½ç±»ä¼¼Cè¯­è¨€çš„å–ä½™ç¬¦å·â€œ%â€ï¼Œè¿”å›å€¼æ˜¯å–ä½™ååœ¨ 2Ï€ä¹‹å†… çš„å€¼.
 	
-  return (a >= 0 ? a : (a + 2*PI)); //ÔÚ·µ»ØÊ±ÈÔĞè×¢Òâ:fmodº¯ÊıÈç¹û¶Ô Ğ¡ÓÚ2¦Ğ µÄÖµ½øĞĞÈ¡Óà£¬
-									//ÄÇÃ´Ôò»á·µ»Ø -(2¦Ğ- a) ÕâÑùµÄ¸ºÖµ£¬Ïàµ±ÓÚÔÚaµÄ»ù´¡ÉÏÔÙ¼õÒ»¸ö2¦Ğ£¬Ê¹Ö®±ä³ÉÁË¸ºÖµ,
-	                                //¸ºÖµµÄ½Ç¶ÈÎÒÃÇÊÇ²»ÄÜÖ±½ÓÊ¹ÓÃµÄ£¬ËùÒÔÎÒÃÇÏÈ¼Ó¸ö2¦Ğ°ÑËü±ä³ÉÕıÖµ£¬
-	                                //µ±È»ÄãÒ²¿ÉÒÔÀí½âÎª:ÕıÖµ²ÅÊÇËûÔ­±¾µÄÖµ.
+  return (a >= 0 ? a : (a + 2*PI)); //åœ¨è¿”å›æ—¶ä»éœ€æ³¨æ„:fmodå‡½æ•°å¦‚æœå¯¹ å°äº2Ï€ çš„å€¼è¿›è¡Œå–ä½™ï¼Œ
+									//é‚£ä¹ˆåˆ™ä¼šè¿”å› -(2Ï€- a) è¿™æ ·çš„è´Ÿå€¼ï¼Œç›¸å½“äºåœ¨açš„åŸºç¡€ä¸Šå†å‡ä¸€ä¸ª2Ï€ï¼Œä½¿ä¹‹å˜æˆäº†è´Ÿå€¼,
+	                                //è´Ÿå€¼çš„è§’åº¦æˆ‘ä»¬æ˜¯ä¸èƒ½ç›´æ¥ä½¿ç”¨çš„ï¼Œæ‰€ä»¥æˆ‘ä»¬å…ˆåŠ ä¸ª2Ï€æŠŠå®ƒå˜æˆæ­£å€¼ï¼Œ
+	                                //å½“ç„¶ä½ ä¹Ÿå¯ä»¥ç†è§£ä¸º:æ­£å€¼æ‰æ˜¯ä»–åŸæœ¬çš„å€¼.
 	
 	/*
-	±¸×¢:ÔÚ FOC_Config.h Í·ÎÄ¼şÖĞ£¬±¾¿â¶¨ÒåÁËÄ¬ÈÏÊ¹ÓÃµÄ¦Ğ(ºê:PI),
-	ÔÚ±¾¿âµÄÀı³ÌÖĞÄ¬ÈÏÊ¹ÓÃ¸Ãºê(PI)À´½øĞĞÓĞ¹Ø¦ĞµÄ¼ÆËã,Ê¹ÓÃÕß¿É¸ù¾İÇé¿ö°´ÕÕ×Ô¼ºĞèÇó¸ü¸Ä.
+	å¤‡æ³¨:åœ¨ FOC_Config.h å¤´æ–‡ä»¶ä¸­ï¼Œæœ¬åº“å®šä¹‰äº†é»˜è®¤ä½¿ç”¨çš„Ï€(å®:PI),
+	åœ¨æœ¬åº“çš„ä¾‹ç¨‹ä¸­é»˜è®¤ä½¿ç”¨è¯¥å®(PI)æ¥è¿›è¡Œæœ‰å…³Ï€çš„è®¡ç®—,ä½¿ç”¨è€…å¯æ ¹æ®æƒ…å†µæŒ‰ç…§è‡ªå·±éœ€æ±‚æ›´æ”¹.
 	*/
 	
 }
-float GetElectricalAngle(Motor_t* motor) //ÓÃÓÚ×ª¶¯
+float GetElectricalAngle(Motor_t* motor) //ç”¨äºè½¬åŠ¨
 {
 	/*
-	µç½Ç¶È¼ÆËãº¯Êı£¬ÊäÈë µç»úµ±Ç°½Ç¶È(angle) ºÍ µç»úµÄ¼«¶ÔÊı(pole_pairs),
-	·µ»Øµ±Ç°µç»úµÄ µç½Ç¶È(µç»ú½Ç¶È*¼«¶ÔÊı),
-	·µ»ØÖµÊÇ floatÀàĞÍµÄµç½Ç¶È(angle * pole_pairs).
+	ç”µè§’åº¦è®¡ç®—å‡½æ•°ï¼Œè¾“å…¥ ç”µæœºå½“å‰è§’åº¦(angle) å’Œ ç”µæœºçš„æå¯¹æ•°(pole_pairs),
+	è¿”å›å½“å‰ç”µæœºçš„ ç”µè§’åº¦(ç”µæœºè§’åº¦*æå¯¹æ•°),
+	è¿”å›å€¼æ˜¯ floatç±»å‹çš„ç”µè§’åº¦(angle * pole_pairs).
 	*/
 	
-    return Limit_ElectricalAngle(motor->DIR*motor->angle * motor->Pole_pairs - motor->angle_el_zero);//µç»úµç½Ç¶È = µç»úµ±Ç°»úĞµ½Ç¶È(angle) * µç»ú¼«¶ÔÊı(pole_pairs)
+    return Limit_ElectricalAngle(motor->DIR*motor->angle * motor->Pole_pairs - motor->angle_el_zero);//ç”µæœºç”µè§’åº¦ = ç”µæœºå½“å‰æœºæ¢°è§’åº¦(angle) * ç”µæœºæå¯¹æ•°(pole_pairs)
 
 	/*
-	±¸×¢:ÔÚ FOC_Config.h Í·ÎÄ¼şÖĞ£¬±¾¿â¶¨ÒåÁËµç»úÄ¬ÈÏÊ¹ÓÃµÄµç»ú¼«¶ÔÊı(ºê:Pole_pairs),
-	ÔÚ±¾¿âµÄÀı³ÌÖĞÄ¬ÈÏÊ¹ÓÃ¸Ãºê(Pole_pairs)À´½øĞĞÓĞ¹Øµç»ú¼«¶ÔÊıµÄ¼ÆËã,Ê¹ÓÃÕß¿É¸ù¾İÇé¿ö°´ÕÕ×Ô¼ºĞèÇó¸ü¸Ä.
+	å¤‡æ³¨:åœ¨ FOC_Config.h å¤´æ–‡ä»¶ä¸­ï¼Œæœ¬åº“å®šä¹‰äº†ç”µæœºé»˜è®¤ä½¿ç”¨çš„ç”µæœºæå¯¹æ•°(å®:Pole_pairs),
+	åœ¨æœ¬åº“çš„ä¾‹ç¨‹ä¸­é»˜è®¤ä½¿ç”¨è¯¥å®(Pole_pairs)æ¥è¿›è¡Œæœ‰å…³ç”µæœºæå¯¹æ•°çš„è®¡ç®—,ä½¿ç”¨è€…å¯æ ¹æ®æƒ…å†µæŒ‰ç…§è‡ªå·±éœ€æ±‚æ›´æ”¹.
 	*/
 } 
 
-float GetElectricalAngle__(Motor_t* motor)//ÓÃÓÚ¼ÆËã 
+float GetElectricalAngle__(Motor_t* motor)//ç”¨äºè®¡ç®— 
 {
 	/*
-	µç½Ç¶È¼ÆËãº¯Êı£¬ÊäÈë µç»úµ±Ç°½Ç¶È(angle) ºÍ µç»úµÄ¼«¶ÔÊı(pole_pairs),
-	·µ»Øµ±Ç°µç»úµÄ µç½Ç¶È(µç»ú½Ç¶È*¼«¶ÔÊı),
-	·µ»ØÖµÊÇ floatÀàĞÍµÄµç½Ç¶È(angle * pole_pairs).
+	ç”µè§’åº¦è®¡ç®—å‡½æ•°ï¼Œè¾“å…¥ ç”µæœºå½“å‰è§’åº¦(angle) å’Œ ç”µæœºçš„æå¯¹æ•°(pole_pairs),
+	è¿”å›å½“å‰ç”µæœºçš„ ç”µè§’åº¦(ç”µæœºè§’åº¦*æå¯¹æ•°),
+	è¿”å›å€¼æ˜¯ floatç±»å‹çš„ç”µè§’åº¦(angle * pole_pairs).
 	*/
-    return Limit_ElectricalAngle(motor->angle * motor->Pole_pairs - motor->angle_el_zero);//µç»úµç½Ç¶È = µç»úµ±Ç°»úĞµ½Ç¶È(angle) * µç»ú¼«¶ÔÊı(pole_pairs)
+    return Limit_ElectricalAngle(motor->angle * motor->Pole_pairs - motor->angle_el_zero);//ç”µæœºç”µè§’åº¦ = ç”µæœºå½“å‰æœºæ¢°è§’åº¦(angle) * ç”µæœºæå¯¹æ•°(pole_pairs)
 
 	/*
-	±¸×¢:ÔÚ FOC_Config.h Í·ÎÄ¼şÖĞ£¬±¾¿â¶¨ÒåÁËµç»úÄ¬ÈÏÊ¹ÓÃµÄµç»ú¼«¶ÔÊı(ºê:Pole_pairs),
-	ÔÚ±¾¿âµÄÀı³ÌÖĞÄ¬ÈÏÊ¹ÓÃ¸Ãºê(Pole_pairs)À´½øĞĞÓĞ¹Øµç»ú¼«¶ÔÊıµÄ¼ÆËã,Ê¹ÓÃÕß¿É¸ù¾İÇé¿ö°´ÕÕ×Ô¼ºĞèÇó¸ü¸Ä.
+	å¤‡æ³¨:åœ¨ FOC_Config.h å¤´æ–‡ä»¶ä¸­ï¼Œæœ¬åº“å®šä¹‰äº†ç”µæœºé»˜è®¤ä½¿ç”¨çš„ç”µæœºæå¯¹æ•°(å®:Pole_pairs),
+	åœ¨æœ¬åº“çš„ä¾‹ç¨‹ä¸­é»˜è®¤ä½¿ç”¨è¯¥å®(Pole_pairs)æ¥è¿›è¡Œæœ‰å…³ç”µæœºæå¯¹æ•°çš„è®¡ç®—,ä½¿ç”¨è€…å¯æ ¹æ®æƒ…å†µæŒ‰ç…§è‡ªå·±éœ€æ±‚æ›´æ”¹.
 	*/
 } 
 
@@ -270,91 +270,91 @@ float angle_el_zero1 = 0;
 float GetElectricalAngle_(float DIR,float Pole_pairs,float angle) 
 {
 	extern float angle_el_zero1;
-    return Limit_ElectricalAngle(DIR*angle * Pole_pairs - angle_el_zero1); ;//µç»úµç½Ç¶È = µç»úµ±Ç°»úĞµ½Ç¶È(angle) * µç»ú¼«¶ÔÊı(pole_pairs)
+    return Limit_ElectricalAngle(DIR*angle * Pole_pairs - angle_el_zero1); ;//ç”µæœºç”µè§’åº¦ = ç”µæœºå½“å‰æœºæ¢°è§’åº¦(angle) * ç”µæœºæå¯¹æ•°(pole_pairs)
 
 } 
 
 
 float Limit(float value , float high , float low)
 {
-	/*ÏŞÖÆÖµº¯Êı£¬ÓÃÓÚÏŞÖÆÄ³Ğ©ÊäÈë²ÎÊıµÄ´óĞ¡£¬ÎªÁË°²È«(?)£¬ÀıÈçÕ¼¿Õ±È£¬µçÑ¹µÈµÈ£¬
-	  ÊäÈëĞèÒªÏŞÖÆµÄÄ¿±ê²ÎÊıÖµ(value),×î´óÖµ(high),×îĞ¡Öµ(low),
-		·µ»Ø floatÀàĞÍµÄ±»ÏŞÖÆºóµÄÖµ.
+	/*é™åˆ¶å€¼å‡½æ•°ï¼Œç”¨äºé™åˆ¶æŸäº›è¾“å…¥å‚æ•°çš„å¤§å°ï¼Œä¸ºäº†å®‰å…¨(?)ï¼Œä¾‹å¦‚å ç©ºæ¯”ï¼Œç”µå‹ç­‰ç­‰ï¼Œ
+	  è¾“å…¥éœ€è¦é™åˆ¶çš„ç›®æ ‡å‚æ•°å€¼(value),æœ€å¤§å€¼(high),æœ€å°å€¼(low),
+		è¿”å› floatç±»å‹çš„è¢«é™åˆ¶åçš„å€¼.
 	*/
-	return (value)<(low)?(low):((value)>(high)?(high):(value));//Èç¹ûÄ¿±ê²ÎÊı³¬³ö×î´ó/×îĞ¡ÖµµÄ·¶Î§£¬¾Í°ÑÕâ¸öÖµËøËÀÔÚ×î´ó/×îĞ¡Öµ
+	return (value)<(low)?(low):((value)>(high)?(high):(value));//å¦‚æœç›®æ ‡å‚æ•°è¶…å‡ºæœ€å¤§/æœ€å°å€¼çš„èŒƒå›´ï¼Œå°±æŠŠè¿™ä¸ªå€¼é”æ­»åœ¨æœ€å¤§/æœ€å°å€¼
 }
 
 float *Park_N(float Uq , float ElectricalAngle)
 {
 	/*
-	ParkÄæ±ä»»º¯Êı£¬ÊäÈë Uq/Iq(¿ØÖÆÁ¦¾ØÓÃµÄµçÑ¹/µçÁ÷) ºÍ µç½Ç¶È(µç»ú¼«¶ÔÊı*µç»úµ±Ç°½Ç¶È) £¬
-	·µ»Ø¾­¹ı ParkÄæ±ä»» ºóµÄ Ualpha Óë Ubeta £¬
-	·µ»ØÖµÊÇÒ»¸ö Ö¸ÏòfloatÀàĞÍµÄÊı×éµÄÖ¸Õë £¬Êı×éµÄµÚÒ»¸öÊıÊÇ Ualpha ,µÚ¶ş¸öÊÇ Ubeta.
+	Parké€†å˜æ¢å‡½æ•°ï¼Œè¾“å…¥ Uq/Iq(æ§åˆ¶åŠ›çŸ©ç”¨çš„ç”µå‹/ç”µæµ) å’Œ ç”µè§’åº¦(ç”µæœºæå¯¹æ•°*ç”µæœºå½“å‰è§’åº¦) ï¼Œ
+	è¿”å›ç»è¿‡ Parké€†å˜æ¢ åçš„ Ualpha ä¸ Ubeta ï¼Œ
+	è¿”å›å€¼æ˜¯ä¸€ä¸ª æŒ‡å‘floatç±»å‹çš„æ•°ç»„çš„æŒ‡é’ˆ ï¼Œæ•°ç»„çš„ç¬¬ä¸€ä¸ªæ•°æ˜¯ Ualpha ,ç¬¬äºŒä¸ªæ˜¯ Ubeta.
 	*/
-	static float Upark_N[2];//Upark_N[2]´æ´¢×Å ¾­¹ıParkÄæ±ä»»ºóµÄ Ualpha ºÍ Ubeta .
+	static float Upark_N[2];//Upark_N[2]å­˜å‚¨ç€ ç»è¿‡Parké€†å˜æ¢åçš„ Ualpha å’Œ Ubeta .
 	
-	Upark_N[0] =  -Uq*sin(ElectricalAngle); //ParkÄæ±ä»» ¢ÙUalpha = Ud * cos¦È - Uq * sin¦È
-    Upark_N[1] =   Uq*cos(ElectricalAngle); //           ¢ÚUbeta  = Uq * cos¦È + Ud * sin¦È
+	Upark_N[0] =  -Uq*sin(ElectricalAngle); //Parké€†å˜æ¢ â‘ Ualpha = Ud * cosÎ¸ - Uq * sinÎ¸
+    Upark_N[1] =   Uq*cos(ElectricalAngle); //           â‘¡Ubeta  = Uq * cosÎ¸ + Ud * sinÎ¸
 	return Upark_N;
 	
-	/* ±¸×¢: UdÒ»°ãÉèÖÃÎª0 , ËùÒÔÕâÀïµÄParkÄæ±ä»»¿´ÆğÀ´ÉÙÁËÒ»²¿·Ö£¬¾ÍÊÇ Ud ÄÇ²¿·Ö */
+	/* å¤‡æ³¨: Udä¸€èˆ¬è®¾ç½®ä¸º0 , æ‰€ä»¥è¿™é‡Œçš„Parké€†å˜æ¢çœ‹èµ·æ¥å°‘äº†ä¸€éƒ¨åˆ†ï¼Œå°±æ˜¯ Ud é‚£éƒ¨åˆ† */
 }
 
 float *Park_N2(float Uq , float Ud , float ElectricalAngle)
 {
 	/*
-	ParkÄæ±ä»»º¯Êı£¬ÊäÈë Uq/Iq(¿ØÖÆÁ¦¾ØÓÃµÄµçÑ¹/µçÁ÷) ºÍ µç½Ç¶È(µç»ú¼«¶ÔÊı*µç»úµ±Ç°½Ç¶È) £¬
-	·µ»Ø¾­¹ı ParkÄæ±ä»» ºóµÄ Ualpha Óë Ubeta £¬
-	·µ»ØÖµÊÇÒ»¸ö Ö¸ÏòfloatÀàĞÍµÄÊı×éµÄÖ¸Õë £¬Êı×éµÄµÚÒ»¸öÊıÊÇ Ualpha ,µÚ¶ş¸öÊÇ Ubeta.
+	Parké€†å˜æ¢å‡½æ•°ï¼Œè¾“å…¥ Uq/Iq(æ§åˆ¶åŠ›çŸ©ç”¨çš„ç”µå‹/ç”µæµ) å’Œ ç”µè§’åº¦(ç”µæœºæå¯¹æ•°*ç”µæœºå½“å‰è§’åº¦) ï¼Œ
+	è¿”å›ç»è¿‡ Parké€†å˜æ¢ åçš„ Ualpha ä¸ Ubeta ï¼Œ
+	è¿”å›å€¼æ˜¯ä¸€ä¸ª æŒ‡å‘floatç±»å‹çš„æ•°ç»„çš„æŒ‡é’ˆ ï¼Œæ•°ç»„çš„ç¬¬ä¸€ä¸ªæ•°æ˜¯ Ualpha ,ç¬¬äºŒä¸ªæ˜¯ Ubeta.
 	*/
-	static float Upark_N[2];//Upark_N[2]´æ´¢×Å ¾­¹ıParkÄæ±ä»»ºóµÄ Ualpha ºÍ Ubeta .
+	static float Upark_N[2];//Upark_N[2]å­˜å‚¨ç€ ç»è¿‡Parké€†å˜æ¢åçš„ Ualpha å’Œ Ubeta .
 	
-	Upark_N[0] = Ud*cos(ElectricalAngle) - Uq*sin(ElectricalAngle); //ParkÄæ±ä»» ¢ÙUalpha = Ud * cos¦È - Uq * sin¦È
-    Upark_N[1] = Uq*cos(ElectricalAngle) + Ud*sin(ElectricalAngle); //           ¢ÚUbeta  = Uq * cos¦È + Ud * sin¦È
+	Upark_N[0] = Ud*cos(ElectricalAngle) - Uq*sin(ElectricalAngle); //Parké€†å˜æ¢ â‘ Ualpha = Ud * cosÎ¸ - Uq * sinÎ¸
+    Upark_N[1] = Uq*cos(ElectricalAngle) + Ud*sin(ElectricalAngle); //           â‘¡Ubeta  = Uq * cosÎ¸ + Ud * sinÎ¸
 	return Upark_N;
 	
-	/* ±¸×¢: UdÒ»°ãÉèÖÃÎª0 , ËùÒÔÕâÀïµÄParkÄæ±ä»»¿´ÆğÀ´ÉÙÁËÒ»²¿·Ö£¬¾ÍÊÇ Ud ÄÇ²¿·Ö */
+	/* å¤‡æ³¨: Udä¸€èˆ¬è®¾ç½®ä¸º0 , æ‰€ä»¥è¿™é‡Œçš„Parké€†å˜æ¢çœ‹èµ·æ¥å°‘äº†ä¸€éƒ¨åˆ†ï¼Œå°±æ˜¯ Ud é‚£éƒ¨åˆ† */
 }
 
 float *Clark_N(float Ualpha ,float Ubeta)
 {
   /*
-	ClarkÄæ±ä»»º¯Êı£¬ÊäÈë Ualpha ºÍ Ubeta £¬
-	·µ»Ø¾­¹ı ClarkÄæ±ä»» ºóµÄ Ua ,Ub ,Uc £¬ÕâÈı¸öÖµÓÃÓÚÉèÖÃÈıÏàÊä³öµÄPWMÕ¼¿Õ±È£¬
-	·µ»ØÖµÒ²ÊÇÒ»¸ö floatÀàĞÍµÄÊı×éÖ¸Õë(Uclark_N) £¬Êı×éµÄµÚÒ»¸öÊıÊÇ Ua £¬µÚ¶ş¸öÊÇ Ub , µÚÈı¸öÊÇ Uc.
+	Clarké€†å˜æ¢å‡½æ•°ï¼Œè¾“å…¥ Ualpha å’Œ Ubeta ï¼Œ
+	è¿”å›ç»è¿‡ Clarké€†å˜æ¢ åçš„ Ua ,Ub ,Uc ï¼Œè¿™ä¸‰ä¸ªå€¼ç”¨äºè®¾ç½®ä¸‰ç›¸è¾“å‡ºçš„PWMå ç©ºæ¯”ï¼Œ
+	è¿”å›å€¼ä¹Ÿæ˜¯ä¸€ä¸ª floatç±»å‹çš„æ•°ç»„æŒ‡é’ˆ(Uclark_N) ï¼Œæ•°ç»„çš„ç¬¬ä¸€ä¸ªæ•°æ˜¯ Ua ï¼Œç¬¬äºŒä¸ªæ˜¯ Ub , ç¬¬ä¸‰ä¸ªæ˜¯ Uc.
 	*/	
-	static float Uclark_N[3];//Uclark_N[3]´æ´¢×Å ¾­¹ıClarkÄæ±ä»»ºóµÄ Ua ºÍ Ub ,Uc .
+	static float Uclark_N[3];//Uclark_N[3]å­˜å‚¨ç€ ç»è¿‡Clarké€†å˜æ¢åçš„ Ua å’Œ Ub ,Uc .
 	
-	//ClarkÄæ±ä»»:
-	Uclark_N[0] = Ualpha + Upower/2;                 // ¢ÙUa = Ualpha ;
-	Uclark_N[1] = (sqrt(3)*Ubeta-Ualpha)/2 + Upower/2; // ¢ÚUb = (¡Ì3 * Ubeta - Ualpha)/2 ;
-	Uclark_N[2] = -(Ualpha + sqrt(3)*Ubeta)/2 + Upower/2;// ¢ÛUc = ( -Ualpha - ¡Ì3 * Ubeta )/2;
+	//Clarké€†å˜æ¢:
+	Uclark_N[0] = Ualpha + Upower/2;                 // â‘ Ua = Ualpha ;
+	Uclark_N[1] = (sqrt(3)*Ubeta-Ualpha)/2 + Upower/2; // â‘¡Ub = (âˆš3 * Ubeta - Ualpha)/2 ;
+	Uclark_N[2] = -(Ualpha + sqrt(3)*Ubeta)/2 + Upower/2;// â‘¢Uc = ( -Ualpha - âˆš3 * Ubeta )/2;
 	
 	return Uclark_N;
 	
 	/*
-	±¸×¢:ÔÚ FOC_Config.h Í·ÎÄ¼şÖĞ£¬±¾¿â¶¨ÒåÁËÄ¬ÈÏÊ¹ÓÃµÄµçÔ´µçÑ¹(ºê:Upower),
-	ÔÚ±¾¿âµÄÀı³ÌÖĞÄ¬ÈÏÊ¹ÓÃ¸Ãºê(Upower)À´½øĞĞÓĞ¹ØµçÔ´µçÑ¹µÄ¼ÆËã,Ê¹ÓÃÕß¿É¸ù¾İÇé¿ö°´ÕÕ×Ô¼ºĞèÇó¸ü¸Ä.
+	å¤‡æ³¨:åœ¨ FOC_Config.h å¤´æ–‡ä»¶ä¸­ï¼Œæœ¬åº“å®šä¹‰äº†é»˜è®¤ä½¿ç”¨çš„ç”µæºç”µå‹(å®:Upower),
+	åœ¨æœ¬åº“çš„ä¾‹ç¨‹ä¸­é»˜è®¤ä½¿ç”¨è¯¥å®(Upower)æ¥è¿›è¡Œæœ‰å…³ç”µæºç”µå‹çš„è®¡ç®—,ä½¿ç”¨è€…å¯æ ¹æ®æƒ…å†µæŒ‰ç…§è‡ªå·±éœ€æ±‚æ›´æ”¹.
 	*/
 }
 
 void SPWM(Motor_t* motor,float Ua , float Ub ,float Uc)
 {
 	/*
-	ÉèÖÃÈıÏàPWMÊä³öº¯Êı£¬¸Ãº¯Êı²ÉÈ¡SPWMµÄÊä³ö·½Ê½£¬ÔÚABCÈıÏàÊä³öUa£¬Ub£¬UcµÄPWM²¨£¬
-	Í¨¹ıÉèÖÃ¶¨Ê±Æ÷ÍâÉèµÄÊä³ö±È½Ï¼Ä´æÆ÷(ARR)ÖµÀ´µ÷½ÚÕ¼¿Õ±È.
-	ÊäÈëABCÈıÏàµÄµçÑ¹Öµ(Ua,Ub,Uc)£¬ÎŞ·µ»ØÖµ.
+	è®¾ç½®ä¸‰ç›¸PWMè¾“å‡ºå‡½æ•°ï¼Œè¯¥å‡½æ•°é‡‡å–SPWMçš„è¾“å‡ºæ–¹å¼ï¼Œåœ¨ABCä¸‰ç›¸è¾“å‡ºUaï¼ŒUbï¼ŒUcçš„PWMæ³¢ï¼Œ
+	é€šè¿‡è®¾ç½®å®šæ—¶å™¨å¤–è®¾çš„è¾“å‡ºæ¯”è¾ƒå¯„å­˜å™¨(ARR)å€¼æ¥è°ƒèŠ‚å ç©ºæ¯”.
+	è¾“å…¥ABCä¸‰ç›¸çš„ç”µå‹å€¼(Ua,Ub,Uc)ï¼Œæ— è¿”å›å€¼.
 	*/
 	
-	float __Ua = Limit(Ua , 8 , 0 );//¼ÆËã²¢ÏŞÖÆABCÏàËùĞèµÄÕ¼¿Õ±È
+	float __Ua = Limit(Ua , 8 , 0 );//è®¡ç®—å¹¶é™åˆ¶ABCç›¸æ‰€éœ€çš„å ç©ºæ¯”
 	float __Ub = Limit(Ub , 8 , 0 );
 	float __Uc = Limit(Uc , 8 , 0 );
 	
-	float _Ua = Limit(__Ua/Upower , 1 , 0 );//¼ÆËã²¢ÏŞÖÆABCÏàËùĞèµÄÕ¼¿Õ±È
+	float _Ua = Limit(__Ua/Upower , 1 , 0 );//è®¡ç®—å¹¶é™åˆ¶ABCç›¸æ‰€éœ€çš„å ç©ºæ¯”
 	float _Ub = Limit(__Ub/Upower , 1 , 0 );
 	float _Uc = Limit(__Uc/Upower , 1 , 0 );
 	
-	motor->SetPWM((uint16_t)(_Ua*A_PWM_Period),(uint16_t)(_Ub*B_PWM_Period),(uint16_t)(_Uc*C_PWM_Period));//ÉèÖÃABCÈıÏàÕ¼¿Õ±È
+	motor->SetPWM((uint16_t)(_Ua*A_PWM_Period),(uint16_t)(_Ub*B_PWM_Period),(uint16_t)(_Uc*C_PWM_Period));//è®¾ç½®ABCä¸‰ç›¸å ç©ºæ¯”
 }
 
 
@@ -400,7 +400,7 @@ void MotorStart(Motor_t* motor)
 	SVPWM2(motor,6,0,_3PI_2);
 	FOC_Delayms(1000);
 	motor->angle = motor->GetAngle() ;
-	motor->angle_el_zero = GetElectricalAngle(motor);//È·¶¨Áã½Ç¶È
+	motor->angle_el_zero = GetElectricalAngle(motor);//ç¡®å®šé›¶è§’åº¦
 	printf("%f\n",motor->angle_el_zero);
 	// FOC_SPWM(0,_3PI_2);
 	SVPWM2(motor,0,0,_3PI_2);
@@ -414,7 +414,7 @@ void MotorStart_Mult(void)
 	SVPWM2(&Motor,6,0,_3PI_2);
 	FOC_Delayms(2000);
 	Motor.angle = Motor.GetAngle() ;
-	Motor.angle_el_zero = GetElectricalAngle(&Motor);//È·¶¨Áã½Ç¶È
+	Motor.angle_el_zero = GetElectricalAngle(&Motor);//ç¡®å®šé›¶è§’åº¦
 	// FOC_SPWM(0,_3PI_2);
 	SVPWM2(&Motor,0,0,_3PI_2);
 	FOC_Delayms(200);
@@ -435,19 +435,19 @@ float GetVelocity(Motor_t* motor)
 	dt = motor->Getdt(&motor->time);
 	if(motor->DIR == 1)
 	{
-		motor->angle = 2*PI - motor->GetAngle();//ÓĞ¸Ğ
+		motor->angle = 2*PI - motor->GetAngle();//æœ‰æ„Ÿ
 	}
 	else
 	{
 		motor->angle  = motor->GetAngle();
 	}
-	// Angle = FOC_GetAngle_Sensorless_SMO();//ÎŞ¸Ğ
+	// Angle = FOC_GetAngle_Sensorless_SMO();//æ— æ„Ÿ
 	float alpha = (motor->T) / (motor->T + motor->time.dt);
 
 	if(fabs(motor->angle - motor->LastAngle) > (0.8f*2*PI))
 	{
-		if((motor->angle - motor->LastAngle)<0){motor->Velocity_raw = (2*PI - motor->LastAngle + motor->angle)/motor->time.dt ;}//Õı×ª
-		else if((motor->angle - motor->LastAngle)>=0){motor->Velocity_raw = -(2*PI - motor->angle + motor->LastAngle)/motor->time.dt ;}//·´×ª
+		if((motor->angle - motor->LastAngle)<0){motor->Velocity_raw = (2*PI - motor->LastAngle + motor->angle)/motor->time.dt ;}//æ­£è½¬
+		else if((motor->angle - motor->LastAngle)>=0){motor->Velocity_raw = -(2*PI - motor->angle + motor->LastAngle)/motor->time.dt ;}//åè½¬
 	}
 	else 
 	{
@@ -472,20 +472,20 @@ float GetVelocity_(Motor_t* motor)
 	// motor->time.dt = dt;
 	// if(motor->DIR == 1)
 	// {
-	// 	motor->angle = 2*PI - motor->GetAngle();//ÓĞ¸Ğ
+	// 	motor->angle = 2*PI - motor->GetAngle();//æœ‰æ„Ÿ
 	// }
 	// else
 	// {
 		motor->angle  = motor->GetAngle();
 
 	// }
-	// Angle = FOC_GetAngle_Sensorless_SMO();//ÎŞ¸Ğ
+	// Angle = FOC_GetAngle_Sensorless_SMO();//æ— æ„Ÿ
 	float alpha = (motor->T) / (motor->T + motor->time.dt);
 
 	if(fabs(motor->angle - motor->LastAngle) > (0.8f*2*PI))
 	{
-		if((motor->angle - motor->LastAngle)<0){motor->Velocity_raw = (2*PI - motor->LastAngle + motor->angle)/motor->time.dt ;}//Õı×ª
-		else if((motor->angle - motor->LastAngle)>=0){motor->Velocity_raw = -(2*PI - motor->angle + motor->LastAngle)/motor->time.dt ;}//·´×ª
+		if((motor->angle - motor->LastAngle)<0){motor->Velocity_raw = (2*PI - motor->LastAngle + motor->angle)/motor->time.dt ;}//æ­£è½¬
+		else if((motor->angle - motor->LastAngle)>=0){motor->Velocity_raw = -(2*PI - motor->angle + motor->LastAngle)/motor->time.dt ;}//åè½¬
 	}
 	else 
 	{
@@ -688,7 +688,7 @@ float PID_Iq(Motor_t* motor,float TargetIq)
 // 	Id = Ialpha*cos(angle_el) + Ibeta*sin(angle_el);
 // 	// Iq = LowPassFilter(LastIq,Iq,0.01);
 
-// 	error = (TargetIq - Iq) ;//¶ÔqÖáÇóÎó²î
+// 	error = (TargetIq - Iq) ;//å¯¹qè½´æ±‚è¯¯å·®
 
 // 	ThisI = LastI + Ki*dt*error;
 // 	ThisI = Limit(ThisI,Ipower/2,-Ipower/2);
@@ -696,7 +696,7 @@ float PID_Iq(Motor_t* motor,float TargetIq)
 // 	Output[0] = Kp*error + ThisI + Kd*(error-Lasterror)/dt;
 // 	Output[0] = Limit(Output[0] , Ipower/2 , -Ipower/2);
 	
-// 	error_ = (0 - Id) ; //¶ÔdÖáÇóÎó²î
+// 	error_ = (0 - Id) ; //å¯¹dè½´æ±‚è¯¯å·®
 
 // 	ThisI_ = LastI_ + Ki_*dt*error_;
 // 	ThisI_ = Limit(ThisI_,Ipower/2,-Ipower/2);
@@ -1050,7 +1050,7 @@ void VF_Start(Motor_t* motor,float TargetVelocity,float acc ,float VF_uq_delta)
 	{
 		Velocity = TargetVelocity;
 	}
-	// if(T<8)//8ÃëºóÇĞ±Õ»·
+	// if(T<8)//8ç§’ååˆ‡é—­ç¯
 	// {
 		LastAngle = Limit_ElectricalAngle(LastAngle+Velocity*dt);
 		// OUTPUT_ = FOC_Sensorless(TargetVelocity,2.0f + Velocity * VF_uq_delta);	
