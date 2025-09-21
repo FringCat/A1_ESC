@@ -26,20 +26,27 @@ void stm32_set_pwm_C(float Uc)
     __HAL_TIM_SET_COMPARE(&htim1,TIM_CHANNEL_1,(uint16_t)(Uc*C_PWM_Period));
 }
 
+
 uint32_t stm32_update_Ia_raw(void)
+
 {
     return HAL_ADC_GetValue(&hadc1);
 }
+
 
 uint32_t stm32_update_Ib_raw(void)
+
 {
     return HAL_ADC_GetValue(&hadc1);
 }
 
+
 uint32_t stm32_update_Ic_raw(void)
+
 {
     return HAL_ADC_GetValue(&hadc1);
 }
+
 
 float stm32_cal_Ia(uint32_t raw,float offset)
 {
@@ -57,24 +64,29 @@ float stm32_cal_Ic(uint32_t raw,float offset)
 }
 
 uint32_t stm32_update_angle_raw(void)
+
 {
     return AS5047P_GetAngle();
 }
+
 
 float stm32_cal_angle(uint32_t raw)
 {
     return (float)(raw)/16383*2*3.1415926; // 0~2PI
 }
 
+
 void stm32_delayms(uint32_t ms)
 {
     HAL_Delay(ms);
 }
 
+
 float stm32_update_dt(Time_t* time)
 {
 	// if(time->ticks == 0)
 	// {
+
 		time->PastTime = time->ThisTime;
 		time->ThisTime =__HAL_TIM_GET_COUNTER(&htim3);
 		if(time->ThisTime > time->PastTime)
@@ -85,8 +97,10 @@ float stm32_update_dt(Time_t* time)
 		{
 			time->dt = (double)(65535 - time->PastTime + time->ThisTime)/(double)(170000000.0/300.0);
 		}
+
 	// 	time->ticks = 1 ;
 	// }
+
 	return  time->dt ;
 }
 
@@ -97,6 +111,8 @@ void foc_init(Motor_HandleTypeDef *motor)
     motor->motor_number = 1; // 设置电机编号
 
     // 初始化时间管理
+
+
     motor->time.ThisTime = 0;
     motor->time.PastTime = 0;
     motor->time.dt = 0.0;
@@ -148,13 +164,16 @@ void foc_init(Motor_HandleTypeDef *motor)
     // motor->MotorData.LastAngle = 0.0f;
     // motor->MotorData.LastVelocity = 0.0f;
     // motor->MotorData.Velocity_raw = 0.0f;
+
     motor->MotorData.Velocity_LPF.last_output = 0.0f;
     motor->MotorData.Velocity_LPF.alpha = 0.1f; // 速度滤波系数
+
 
     // 初始化驱动接口函数指针
     motor->MotorDrv.Set_PWM_A = stm32_set_pwm_A;      // 设置PWM函数指针
     motor->MotorDrv.Set_PWM_B = stm32_set_pwm_B;      // 设置PWM函数指针
     motor->MotorDrv.Set_PWM_C = stm32_set_pwm_C;      // 设置PWM函数指针
+
 
     motor->MotorDrv.Update_Ia_raw = stm32_update_Ia_raw;       // 获取IA电流函数指针
     motor->MotorDrv.Update_Ib_raw = stm32_update_Ib_raw;       // 获取IB电流函数指针
@@ -169,5 +188,6 @@ void foc_init(Motor_HandleTypeDef *motor)
 
     motor->MotorDrv.Update_Angle_raw = stm32_update_angle_raw;    // 获取角度函数指针
     motor->MotorDrv.Cal_Angle = stm32_cal_angle;   // 角度转换函数指针
+
     
 }

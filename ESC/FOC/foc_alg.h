@@ -9,6 +9,7 @@
  */
 typedef struct
 {
+
     uint32_t ThisTime;    // 当前时刻的时间戳（如定时器当前计数值/系统时间）
     uint32_t PastTime;    // 上一时刻的时间戳（用于计算时间差）
     double dt;            // 时间差（ThisTime - PastTime，单位：s/ms，需根据计时基准统一）
@@ -19,6 +20,7 @@ typedef struct
     float alpha;    // 滤波系数（0~1，值越大滤波越平滑，但响应越慢）
     float last_output;   // 滤波输出值（上一次滤波后的结果，用于下一次滤波计算）
 }LPF_t;
+
 
 /**
  * @brief PID控制器核心结构体
@@ -82,7 +84,9 @@ typedef struct
     
     // -------------------------- 位置/速度相关（控制反馈与目标计算） --------------------------
     float angle;            // 电机机械角度（编码器反馈后校准的值，单位：rad/deg）
+
     float last_angle;        // 上一时刻机械角度（用于计算速度：Velocity = (angle - LastAngle)/dt）
+
     float angle_el;         // 电机电角度（angle × Pole_pairs，FOC磁链定向的核心依据）
     float Velocity;         // 电机转速（由Δangle/Δdt计算，单位：rad/s/RPM）
     
@@ -107,9 +111,11 @@ typedef struct
     float IB_offset;        // IB电流零点偏移（同上）
     float IC_offset;        // IC电流零点偏移（同上，三相平衡时可省略，由IA+IB推导）
     
+
     // -------------------------- 速度数据 -------------------------------
     float Velocity_raw;     // 转速原始值（未滤波前的计算结果，用于后续平滑处理）
     LPF_t Velocity_LPF;     // 速度滤波器实例（用于平滑Velocity_raw，提升速度反馈质量）
+
     
     // -------------------------- 编码器角度原始数据（union适配两种读取方式） --------------------------
     union 
@@ -144,6 +150,7 @@ typedef struct
     void (*Set_PWM_C)(float Uc);    // 三相PWM-C相输出函数
 
     // -------------------------- 电流采集接口 --------------------------
+
     uint32_t (*Update_Ia_raw)(void);       // 获取IA电流ADC原始值（返回：16/32位ADC值，无符号）
     uint32_t (*Update_Ib_raw)(void);       // 获取IB电流ADC原始值
     uint32_t (*Update_Ic_raw)(void);       // 获取IC电流ADC原始值
@@ -154,11 +161,14 @@ typedef struct
 
     // -------------------------- 角度采集接口 --------------------------
     uint32_t (*Update_Angle_raw)(void);    // 获取编码器角度原始值（返回：编码器输出的原始数据，如14位AS5047P数据）
+
     float (*Cal_Angle)(uint32_t raw); // 角度转换函数（参数：编码器原始值，返回：实际机械角度，单位rad/deg）
 
     // -------------------------- 通用硬件接口 --------------------------
     void (*Delayms)(uint16_t ms);  // 毫秒级延时函数（用于校准、初始化等待）
+
     float (*Update_dt)(Time_t* time);  // 计算时间差dt函数（参数：Time_t结构体，返回：当前dt值，用于速度计算）
+
 } Motor_DrvTypeDef;
 
 /**
@@ -191,18 +201,22 @@ float mymap(float x, float in_min, float in_max, float out_min, float out_max); 
 // 电角度处理
 float Limit_angle_el(float angle_el);  // 电角度限幅（约束在0~2π）
 float Get_angle_el(Motor_HandleTypeDef *motor);  // 获取当前电角度
+
 float update_angle_el(Motor_HandleTypeDef *motor);  // 更新电角度（机械角→电角度）
 float Calculate_angle_el(float Pole_pairs,float angle,float angle_el_zero);  // 计算电角度（含极对数和零点）
 
 // FOC坐标变换
+
 float *Calculate_Park_N(float Uq , float Ud , float angle_el);  // Park逆变换（dq→αβ电压）
 float *update_Park_N(Motor_HandleTypeDef *motor);  // 更新Park逆变换结果到算法层
 float *Calculate_Clark_N(float Ualpha ,float Ubeta,float Upower);  // Clark逆变换（αβ→三相电压）
 float *update_Clark_N(Motor_HandleTypeDef *motor);  // 更新Clark逆变换结果到算法层
+
 float *Calculate_Clark(float IA ,float IB ,float IC);  // Clark变换（三相电流→αβ电流）
 float *update_Clark(Motor_HandleTypeDef *motor);  // 更新Clark变换结果到算法层
 float *Calculate_Park(float Ialpha ,float Ibeta ,float angle_el);  // Park变换（αβ电流→dq电流）
 float *update_Park(Motor_HandleTypeDef *motor);  // 更新Park变换结果到算法层
+
 
 // PWM输出控制
 void update_pwm(Motor_HandleTypeDef *motor);  // 更新PWM（用算法层三相电压输出）
@@ -222,6 +236,7 @@ void set_svpwm(Motor_HandleTypeDef *motor, float Uq , float Ud ,float angle_el);
 
 // 速度计算与滤波
 float Calculate_LPF(float input, float last_output, float alpha);  // 一阶低通滤波
+
 float update_velocity_LPF(Motor_HandleTypeDef *motor); // 更新滤波后转速
 float update_velocity_raw(Motor_HandleTypeDef *motor); // 更新原始转速
 float get_velocity(Motor_HandleTypeDef *motor);  // 获取当前转速
@@ -229,8 +244,10 @@ float get_velocity_raw(Motor_HandleTypeDef *motor);  // 获取当前原始转速
 float Calculate_velocity_LPF(float angle, float last_angle, float dt, float last_velocity, float alpha);  // 计算转速（含滤波）
 float Calculate_velocity_raw(float angle, float last_angle, float dt);  // 计算转速（不含滤波）
 
+
 // PID控制
 float Calculate_PID(float target, float feedback, float dt ,PID_t* pid);  // PID计算（位置式，支持积分处理）
+
 
 // 时间相关
 float update_dt(Motor_HandleTypeDef *motor); // 更新dt值
@@ -248,5 +265,6 @@ float get_Ic_offset(Motor_HandleTypeDef *motor);  // 获取IC电流偏置
 
 void update_pole_pairs_sensor_block(Motor_HandleTypeDef *motor); // 极对数辨识（有传感器阻塞式更新）
 void update_pole_pairs_sensor_nonblock(Motor_HandleTypeDef *motor); // 极对数辨识（有传感器非阻塞式更新）
+
 
 #endif

@@ -57,6 +57,7 @@ float Get_angle_el(Motor_HandleTypeDef *motor)
     return motor->MotorAlg.angle_el;
 }
 
+
 float Calculate_angle_el(float Pole_pairs,float angle,float angle_el_zero) 
 {
     return Limit_angle_el(angle * Pole_pairs - angle_el_zero);
@@ -86,6 +87,7 @@ float *Calculate_Park_N(float Uq , float Ud , float angle_el)
 
 float *update_Park_N(Motor_HandleTypeDef *motor)
 {
+
     static float* Upark_N;
     Upark_N = Calculate_Park_N(motor->MotorAlg.Uq , motor->MotorAlg.Ud , motor->MotorAlg.angle_el);
     motor->MotorAlg.Ualpha = Upark_N[0];
@@ -153,6 +155,7 @@ float *update_Park(Motor_HandleTypeDef *motor)
     motor->MotorAlg.Id = Ipark[0];
     motor->MotorAlg.Iq = Ipark[1];
     return Ipark;
+
 }
 
 void update_pwm(Motor_HandleTypeDef *motor)
@@ -353,6 +356,7 @@ float Calculate_velocity_raw(float angle, float last_angle, float dt)
     {
         velocity_raw = (angle - last_angle)/dt ;
     }
+
 
     return velocity_raw;
 }
