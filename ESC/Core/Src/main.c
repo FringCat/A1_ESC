@@ -19,6 +19,7 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "adc.h"
+#include "dma.h"
 #include "fdcan.h"
 #include "spi.h"
 #include "tim.h"
@@ -53,17 +54,32 @@ int fputc(int ch ,FILE *f)
 
 /* Private macro -------------------------------------------------------------*/
 /* USER CODE BEGIN PM */
-
+#define data_num 3
+typedef struct 
+{
+  float data[data_num];
+  uint8_t frame_tail[4]; 
+}justfloat_t;
+void data_init(justfloat_t *justfloat)
+{
+  justfloat->data[0] = 0X00;
+  justfloat->data[1] = 0X00;
+  justfloat->data[2] = 0X80;
+  justfloat->data[3] = 0X7F;
+}
+justfloat_t motordata;
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
+
 float v0 = 0;
 int i = 0;
 int max = 2000;
 ADRC_t ADRC;
 extern float flag;
+uint16_t I_raw[10] = {0};
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -106,6 +122,7 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
+  MX_DMA_Init();
   MX_ADC1_Init();
   MX_FDCAN1_Init();
   MX_SPI1_Init();
@@ -115,6 +132,7 @@ int main(void)
   /* USER CODE BEGIN 2 */
   FOC_init();
   ADRC_Init(&ADRC);
+  data_init(&motordata);
   // MotorStart(&Motor);
   /* USER CODE END 2 */
 
@@ -126,21 +144,12 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-
-    float target = 30 ;
-    ADRC.TD.h = Motor.Getdt(&Motor.time);
-    Motor.time.dt = Motor.Getdt(&Motor.time);
-    float v = GetVelocity(&Motor);
-    TD(&ADRC,target);
-    ESO(&ADRC,v);
-    float output = NLSEF1(&ADRC);
-    SVPWM(&Motor,output,GetElectricalAngle(&Motor));
-    // printf("%f,%f,%f,%f\n",ADRC.ESO.z[0],v,ADRC.ESO.z[1],ADRC.ESO.z[2]);
-    printf("%f,%f,%f,%f,%f,%f,%f,%f\n",target,v,output,ADRC.ESO.z[0],ADRC.TD.v[0],Motor.Velocity_raw,flag,ADRC.ESO.z[2]);
-
-  
+    motordata.data[0] = 111.0;
+    motordata.data[1] = 222.0;
+    motordata.data[2] = 333.0;
+    HAL_UART_Transmit(&huart3,(uint8_t*)&motordata,sizeof(justfloat_t),HAL_MAX_DELAY);
+    HAL_Delay(1);
     ticks = 0;
-    // HAL_Delay(1);
   }
   /* USER CODE END 3 */
 }
@@ -192,36 +201,6 @@ void SystemClock_Config(void)
 }
 
 /* USER CODE BEGIN 4 */
-    // static float r = 1;
-    // static float a = 12 ;
-    // static float h_all = 0;
-    // static float fh_ = 0;
-    // h_all+= ADRC.TD.h;
-    // float fh =  (2*a*r)/(3.1415926*(1+r*r*h_all*h_all));
-    // fh_ += (fh*ADRC.TD.h);
-    // printf("%f,%f,%f\n",fh,fh_,h_all);
-
-  // ADRC.TD.h = Motor.Getdt(&Motor.time);
-    // // float v = GetVelocity(&Motor);
-    // if(i>max)
-    // {
-    //   i=0;
-    // }
-    // else if(i<max/2)
-    // {
-    //   v0 = 0;
-    //   i++;
-    // }
-    // else if (i>=max/2)
-    // {
-    //   v0 = 12;
-    //   i++;
-    // }
-    // TD(&ADRC,v0);
-    // // ESO(&ADRC,v);
-    // // printf("%f,%f,%f,%f\n",ADRC.ESO.z[0],v,ADRC.ESO.z[1],ADRC.ESO.z[2]);
-
-
 
 /* USER CODE END 4 */
 
