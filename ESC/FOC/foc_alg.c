@@ -52,6 +52,12 @@ float Limit_angle_el(float angle_el)
     return (a >= 0 ? a : (a + 2*PI));
 }
 
+float update_angle(Motor_HandleTypeDef *motor)
+{
+    motor->MotorAlg.angle = motor->MotorDrv.Cal_Angle(motor->MotorDrv.Update_Angle_raw());
+    return motor->MotorAlg.angle;
+}
+
 float Get_angle_el(Motor_HandleTypeDef *motor) 
 {
     return motor->MotorAlg.angle_el;
@@ -64,7 +70,8 @@ float Calculate_angle_el(float Pole_pairs,float angle,float angle_el_zero)
 
 float update_angle_el(Motor_HandleTypeDef *motor) 
 {
-    motor->MotorAlg.angle_el = Calculate_angle_el(motor->MotorConfig.Pole_pairs, motor->MotorDrv.Cal_Angle(motor->MotorDrv.Update_Angle_raw()), motor->MotorConfig.angle_el_zero);
+    motor->MotorAlg.angle = update_angle(motor);
+    motor->MotorAlg.angle_el = Calculate_angle_el(motor->MotorConfig.Pole_pairs,motor->MotorAlg.angle, motor->MotorConfig.angle_el_zero);
     return motor->MotorAlg.angle_el;
 }
 
@@ -748,24 +755,24 @@ float get_Ic_offset(Motor_HandleTypeDef *motor)
 
 void update_pole_pairs_sensor_block(Motor_HandleTypeDef *motor)
 {
-    float angle_el_start = 0 , angle_el_end = 0 ;
+    float angle_start = 0 , angle_end = 0 ;
     set_svpwm(motor,0.0f, motor->MotorConfig.UMAX*0.5f , 0.0f);
     motor->MotorDrv.Delayms(2000);
-    angle_el_start = update_angle_el(motor);
+    angle_start = update_angle(motor);
     for(int i=0 ; i<10000 ; i++)
     {
         set_svpwm(motor,0.0f, motor->MotorConfig.UMAX*0.5f , Limit_angle_el((float)i*0.001f));
         motor->MotorDrv.Delayms(1);
     }
     motor->MotorDrv.Delayms(2000);
-    angle_el_end = update_angle_el(motor);
-    motor->MotorConfig.Pole_pairs = (uint32_t)round(myabs((float)(10000*0.001f)/(angle_el_end - angle_el_start)));
+    angle_end = update_angle(motor);
+    motor->MotorConfig.Pole_pairs = (uint32_t)round(myabs((float)(10000*0.001f)/(angle_end - angle_start)));
     set_svpwm(motor,0.0f, 0.0f , 0.0f);
 }
 
 void update_pole_pairs_sensor_nonblock(Motor_HandleTypeDef *motor)
 {
-    static float angle_el_start = 0 , angle_el_end = 0 ;
+    static float angle_start = 0 , angle_end = 0 ;
     static uint8_t state = 0 ;
     static float total_time = 0 ;
 
@@ -796,7 +803,7 @@ void update_pole_pairs_sensor_nonblock(Motor_HandleTypeDef *motor)
         case 1:
         {
             set_svpwm(motor,0.0f, motor->MotorConfig.UMAX*0.5f , 0.0f);
-            angle_el_start = update_angle_el(motor);
+            angle_start = update_angle(motor);
         }break;
         case 2:
         {
@@ -804,8 +811,8 @@ void update_pole_pairs_sensor_nonblock(Motor_HandleTypeDef *motor)
         }break;
         case 3:
         {
-            angle_el_end = update_angle_el(motor);
-            motor->MotorConfig.Pole_pairs = (uint32_t)round(myabs((float)(10.0f)/(angle_el_end - angle_el_start)));
+            angle_end = update_angle(motor);
+            motor->MotorConfig.Pole_pairs = (uint32_t)round(myabs((float)(10.0f)/(angle_end - angle_start)));
             set_svpwm(motor,0.0f, 0.0f , 0.0f);
         }
         default:
@@ -814,3 +821,95 @@ void update_pole_pairs_sensor_nonblock(Motor_HandleTypeDef *motor)
         }break;
     }
 }
+
+void update_2DIR_sensor_block(Motor_HandleTypeDef *motor)
+{
+    float angle_start = 0 , angle_end = 0 ;
+    set_svpwm(motor,0.0f, motor->MotorConfig.UMAX*0.5f , 0.0f);
+    motor->MotorDrv.Delayms(500);
+    angle_start = update_angle(motor);
+    for(int i=0 ; i<1000 ; i++)
+    {
+        set_svpwm(motor,0.0f, motor->MotorConfig.UMAX*0.5f , Limit_angle_el((float)i*0.01f));
+        motor->MotorDrv.Delayms(1);
+    }
+    motor->MotorDrv.Delayms(500);
+    angle_end = update_angle(motor);
+    if(angle_end-angle_start>0)
+    {
+        motor->MotorConfig.DIR = 1;
+    }
+    else if(angle_end-angle_start<0)
+    {
+        motor->MotorConfig.DIR = 2;
+    }
+    else
+    {
+        /*传感器异常报错*/
+    }
+}
+
+void update_2DIR_sensor_nonblock(Motor_HandleTypeDef *motor)
+{
+    static float angle_start = 0 , angle_end = 0 ;
+    static uint8_t state = 0 ;
+    static float total_time = 0 ;
+
+    total_time += get_dt(motor);
+    if(total_time < 0.5f)
+    {
+        state = 0;
+    }
+    else if(total_time >= 0.5f && total_time < 1.0f)
+    {
+        state = 1;
+    }
+    else if(total_time >= 1.0f && total_time < 11.0f)
+    {
+        state = 2;
+    }
+    else if(total_time >= 11.0f)
+    {
+        state = 3;
+    }
+
+    switch (state)
+    {
+        case 0:
+        {
+            set_svpwm(motor,0.0f, 0.0f , 0.0f);
+        }break;
+        case 1:
+        {
+            set_svpwm(motor,0.0f, motor->MotorConfig.UMAX*0.5f , 0.0f);
+            angle_start = update_angle(motor);
+        }break;
+        case 2:
+        {
+            set_svpwm(motor,0.0f, motor->MotorConfig.UMAX*0.5f , Limit_angle_el((total_time - 1.0f)*1.0f));
+        }break;
+        case 3:
+        {
+            angle_end = update_angle(motor);
+            if(angle_end-angle_start>0)
+            {
+                motor->MotorConfig.DIR = 1;
+            }
+            else if(angle_end-angle_start<0)
+            {
+                motor->MotorConfig.DIR = 2;
+            }
+            else
+            {
+                /*传感器异常报错*/
+            }
+            set_svpwm(motor,0.0f, 0.0f , 0.0f);
+        }
+        default:
+        {
+            /* 打印报错信息 */
+        }break;
+    }
+}
+
+
