@@ -35,8 +35,6 @@
 "esc\stm32g4xx_hal_uart_ex.o"
 "esc\system_stm32g4xx.o"
 "esc\as5047p.o"
-"esc\foc.o"
-"esc\adrc.o"
 "esc\foc_alg.o"
 "esc\foc_drv.o"
 --library_type=microlib --strict --scatter "ESC\ESC.sct"

@@ -11,12 +11,12 @@
                 "d:\\zData\\A1\\ESC_V1.0.0\\ESC",
                 "d:\\zData\\A1\\ESC_V1.0.0\\ESC\\FOC",
                 "d:\\zData\\A1\\ESC_V1.0.0\\ESC\\FOC\\foc_drv",
+                "d:\\zData\\A1\\ESC_V1.0.0\\ESC\\others",
                 "C:\\Keil5 MDK 1\\ARM\\ARMCC\\include",
                 "C:\\Keil5 MDK 1\\ARM\\ARMCC\\include\\rw",
                 "d:\\zData\\A1\\ESC_V1.0.0\\ESC\\MDK-ARM",
                 "d:\\zData\\A1\\ESC_V1.0.0\\ESC\\Core\\Src",
-                "d:\\zData\\A1\\ESC_V1.0.0\\ESC\\Drivers\\STM32G4xx_HAL_Driver\\Src",
-                "d:\\zData\\A1\\ESC_V1.0.0\\ESC\\others"
+                "d:\\zData\\A1\\ESC_V1.0.0\\ESC\\Drivers\\STM32G4xx_HAL_Driver\\Src"
             ],
             "defines": [
                 "USE_HAL_DRIVER",

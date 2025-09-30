@@ -29,9 +29,10 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include <stdio.h>
-#include "./others/as5047p.h"  
-#include "./others/FOC.h"
-#include "./others/ADRC.h"
+#include "foc_alg.h"
+#include "foc_drv.h"
+#include "as5047p.h"  
+// #include "./others/ADRC.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -39,8 +40,7 @@
 extern UART_HandleTypeDef huart3;
 extern TIM_HandleTypeDef htim3;
 extern TIM_HandleTypeDef htim1;
-extern Motor_t Motor;
-extern uint32_t ticks;
+Motor_HandleTypeDef motor;
 /* USER CODE END PTD */
 
 /* Private define ------------------------------------------------------------*/
@@ -74,12 +74,6 @@ justfloat_t motordata;
 
 /* USER CODE BEGIN PV */
 
-float v0 = 0;
-int i = 0;
-int max = 2000;
-ADRC_t ADRC;
-extern float flag;
-uint16_t I_raw[10] = {0};
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -130,10 +124,11 @@ int main(void)
   MX_USART3_UART_Init();
   MX_TIM3_Init();
   /* USER CODE BEGIN 2 */
-  FOC_init();
-  ADRC_Init(&ADRC);
-  data_init(&motordata);
-  // MotorStart(&Motor);
+  foc_init(&motor);
+  update_2DIR_sensor_block(&motor);
+  // update_pole_pairs_sensor_block(&motor);
+  // ADRC_Init(&ADRC);
+  // data_init(&motordata);
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -144,12 +139,9 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-    motordata.data[0] = 111.0;
-    motordata.data[1] = 222.0;
-    motordata.data[2] = 333.0;
-    HAL_UART_Transmit(&huart3,(uint8_t*)&motordata,sizeof(justfloat_t),HAL_MAX_DELAY);
-    HAL_Delay(1);
-    ticks = 0;
+    update_angle(&motor);
+    printf("%d,%f\n",motor.MotorConfig.DIR,motor.MotorAlg.angle);
+    motor.MotorDrv.Delayms(1);
   }
   /* USER CODE END 3 */
 }
@@ -201,7 +193,10 @@ void SystemClock_Config(void)
 }
 
 /* USER CODE BEGIN 4 */
+void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
+{
 
+}
 /* USER CODE END 4 */
 
 /**

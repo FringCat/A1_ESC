@@ -46,7 +46,6 @@ esc\main.o: ../Core/Inc/tim.h
 esc\main.o: ../Core/Inc/usart.h
 esc\main.o: ../Core/Inc/gpio.h
 esc\main.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdio.h
-esc\main.o: ../../ESC/./others/as5047p.h
-esc\main.o: ../../ESC/./others/FOC.h
-esc\main.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\math.h
-esc\main.o: ../../ESC/./others/ADRC.h
+esc\main.o: ../FOC/foc_alg.h
+esc\main.o: ../FOC/foc_drv.h
+esc\main.o: ..\others\as5047p.h

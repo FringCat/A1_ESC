@@ -23,6 +23,8 @@
         "atomic": "c",
         "math.h": "c",
         "foc_alg.h": "c",
-        "stdint.h": "c"
+        "stdint.h": "c",
+        "foc_drv.h": "c",
+        "gpio.h": "c"
     }
 }

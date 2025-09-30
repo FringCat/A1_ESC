@@ -46,7 +46,7 @@ uint16_t AS5047_read(uint16_t add)
 float GetAngle(void)
 { 
 	float angle;
-	angle = (float)AS5047_read(0x3FFE)/16383*2*3.1415926;
+	angle = (float)AS5047_read(0x3FFE)/16383.0f*2.0f*3.1415926f;
 
 	return angle;
 }

@@ -7,7 +7,8 @@
 #include "gpio.h"
 #include <math.h>
 #include <stdio.h>
-#include "as5047p.h"
+#include <string.h>
+#include "as5047p.h"  
 #include "foc_alg.h"
 #include "foc_drv.h"
 
@@ -18,12 +19,12 @@ void stm32_set_pwm_A(float Ua)
 
 void stm32_set_pwm_B(float Ub)
 {
-    __HAL_TIM_SET_COMPARE(&htim1,TIM_CHANNEL_1,(uint16_t)(Ub*B_PWM_Period));
+    __HAL_TIM_SET_COMPARE(&htim1,TIM_CHANNEL_2,(uint16_t)(Ub*B_PWM_Period));
 }
 
 void stm32_set_pwm_C(float Uc)
 {
-    __HAL_TIM_SET_COMPARE(&htim1,TIM_CHANNEL_1,(uint16_t)(Uc*C_PWM_Period));
+    __HAL_TIM_SET_COMPARE(&htim1,TIM_CHANNEL_3,(uint16_t)(Uc*C_PWM_Period));
 }
 
 uint32_t stm32_update_Ia_raw(void)
@@ -63,7 +64,7 @@ uint32_t stm32_update_angle_raw(void)
 
 float stm32_cal_angle(uint32_t raw)
 {
-    return (float)(raw)/16383*2*3.1415926; // 0~2PI
+    return (float)(raw)/16383.0f*2.0f*3.1415926f; // 0~2PI
 }
 
 void stm32_delayms(uint32_t ms)
@@ -79,12 +80,12 @@ float stm32_update_dt(Time_t* time)
 		time->ThisTime =__HAL_TIM_GET_COUNTER(&htim3);
 		if(time->ThisTime > time->PastTime)
 		{
-			time->dt = (double)(time->ThisTime - time->PastTime)/(double)(170000000.0/300.0);
-		}
-		else
-		{
-			time->dt = (double)(65535 - time->PastTime + time->ThisTime)/(double)(170000000.0/300.0);
-		}
+            time->dt = (float)(time->ThisTime - time->PastTime)/(170000000.0f/300.0f);
+        }
+        else
+        {
+            time->dt = (float)(65535 - time->PastTime + time->ThisTime)/(170000000.0f/300.0f);
+        }
 	// 	time->ticks = 1 ;
 	// }
 	return  time->dt ;
@@ -149,7 +150,7 @@ void foc_init(Motor_HandleTypeDef *motor)
     // motor->MotorData.LastVelocity = 0.0f;
     // motor->MotorData.Velocity_raw = 0.0f;
     motor->MotorData.Velocity_LPF.last_output = 0.0f;
-    motor->MotorData.Velocity_LPF.alpha = 0.1f; // 速度滤波系数
+    motor->MotorData.Velocity_LPF.alpha = 0.13f; // 速度滤波系数
 
     // 初始化驱动接口函数指针
     motor->MotorDrv.Set_PWM_A = stm32_set_pwm_A;      // 设置PWM函数指针
@@ -171,3 +172,4 @@ void foc_init(Motor_HandleTypeDef *motor)
     motor->MotorDrv.Cal_Angle = stm32_cal_angle;   // 角度转换函数指针
     
 }
+

@@ -7,4 +7,6 @@
 #define I_ADC_CONV    0.0040283203125
 #define U_ADC_CONV    0.000244140625*6  
 
+void foc_init(Motor_HandleTypeDef *motor);
+
 #endif

@@ -13,6 +13,7 @@ extern float angle_1,angle_2;
 uint16_t Parity_bit_Calculate(uint16_t data_2_cal);
 uint16_t SPI_ReadWrite_OneByte(uint16_t _txdata);
 uint16_t AS5047_read(uint16_t add);
+uint32_t AS5047P_GetAngle(void);
 float GetAngle(void);
 
 #endif

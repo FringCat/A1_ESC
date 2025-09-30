@@ -1,0 +1,95 @@
+T1D84 000:004.254   SEGGER J-Link V8.66 Log File
+T1D84 000:004.346   DLL Compiled: Sep  3 2025 14:53:21
+T1D84 000:004.387   Logging started @ 2025-09-29 08:42
+T1D84 000:004.393   Process: C:\Keil_v5\UV4\UV4.exe
+T1D84 000:004.401 - 4.396ms 
+T1D84 000:004.409 JLINK_SetWarnOutHandler(...)
+T1D84 000:004.413 - 0.005ms 
+T1D84 000:004.419 JLINK_OpenEx(...)
+T1D84 000:008.326   Firmware: J-Link V11 compiled Apr  1 2025 10:02:30
+T1D84 000:009.291   Firmware: J-Link V11 compiled Apr  1 2025 10:02:30
+T1D84 000:028.319   Hardware: V11.00
+T1D84 000:028.357   S/N: 821009344
+T1D84 000:028.362   OEM: SEGGER
+T1D84 000:028.368   Feature(s): GDB
+T1D84 000:030.003   Bootloader: 2019 Jul 04
+T1D84 000:030.679   USB speed mode: High speed (480 MBit/s)
+T1D84 000:031.099   TELNET listener socket opened on port 19021
+T1D84 000:031.197   WEBSRV WEBSRV_Init(): Starting webserver thread(s)
+T1D84 000:031.334   WEBSRV Webserver running on local port 19080
+T1D84 000:031.415   Looking for J-Link GUI Server exe at: C:\Keil_v5\ARM\Segger\JLinkGUIServer.exe
+T1D84 000:031.475   Looking for J-Link GUI Server exe at: C:\Program Files\SEGGER\JLink_V866\JLinkGUIServer.exe
+T1D84 000:031.496   Forking J-Link GUI Server: C:\Program Files\SEGGER\JLink_V866\JLinkGUIServer.exe
+T1D84 000:046.956   J-Link GUI Server info: "J-Link GUI server V8.66 "
+T1D84 000:049.621 - 45.198ms returns "O.K."
+T1D84 000:049.650 JLINK_GetEmuCaps()
+T1D84 000:049.656 - 0.005ms returns 0xB9FF7BBF
+T1D84 000:049.665 JLINK_TIF_GetAvailable(...)
+T1D84 000:050.063 - 0.397ms 
+T1D84 000:050.080 JLINK_SetErrorOutHandler(...)
+T1D84 000:050.084 - 0.004ms 
+T1D84 000:050.100 JLINK_ExecCommand("ProjectFile = "c:\Users\User\work\AAA_projects\FOC\ESC_V1.0.0\ESC\MDK-ARM\JLinkSettings.ini"", ...). 
+T1D84 000:061.551   Ref file found at: C:\Keil_v5\ARM\Segger\JLinkDevices.ref
+T1D84 000:061.627   REF file references invalid XML file: C:\Program Files\SEGGER\JLink_V866\JLinkDevices.xml
+T1D84 000:062.549 - 12.450ms returns 0x00
+T1D84 000:062.884 JLINK_ExecCommand("Device = STM32G431CBUx", ...). 
+T1D84 000:063.857   Flash bank @ 0x08000000: SFL: Parsing sectorization info from ELF file
+T1D84 000:063.871     FlashDevice.SectorInfo[0]: .SectorSize = 0x00000800, .SectorStartAddr = 0x00000000
+T1D84 000:063.879   FlashBank @0x08000000: Sectorization info from SFL ELF file ignored because sectorization override from DLL / XML file is active.
+T1D84 000:064.175   Device "STM32G431CB" selected.
+T1D84 000:064.411 - 1.520ms returns 0x00
+T1D84 000:064.421 JLINK_ExecCommand("DisableConnectionTimeout", ...). 
+T1D84 000:064.438   ERROR: Unknown command
+T1D84 000:064.444 - 0.017ms returns 0x01
+T1D84 000:064.449 JLINK_GetHardwareVersion()
+T1D84 000:064.454 - 0.004ms returns 110000
+T1D84 000:064.459 JLINK_GetDLLVersion()
+T1D84 000:064.463 - 0.003ms returns 86600
+T1D84 000:064.467 JLINK_GetOEMString(...)
+T1D84 000:064.472 JLINK_GetFirmwareString(...)
+T1D84 000:064.476 - 0.003ms 
+T1D84 000:064.830 JLINK_GetDLLVersion()
+T1D84 000:064.836 - 0.006ms returns 86600
+T1D84 000:064.841 JLINK_GetCompileDateTime()
+T1D84 000:064.845 - 0.003ms 
+T1D84 000:064.905 JLINK_GetFirmwareString(...)
+T1D84 000:064.909 - 0.004ms 
+T1D84 000:064.966 JLINK_GetHardwareVersion()
+T1D84 000:064.970 - 0.004ms returns 110000
+T1D84 000:065.026 JLINK_GetSN()
+T1D84 000:065.030 - 0.004ms returns 821009344
+T1D84 000:065.097 JLINK_GetOEMString(...)
+T1D84 000:065.337 JLINK_TIF_Select(JLINKARM_TIF_JTAG)
+T1D84 000:067.078 - 1.742ms returns 0x00
+T1D84 000:067.093 JLINK_HasError()
+T1D84 000:067.103 JLINK_SetSpeed(5000)
+T1D84 000:067.328 - 0.227ms 
+T1D84 000:067.334 JLINK_GetIdData(pIdData)
+T1D84 000:067.834   InitTarget() start
+T1D84 000:067.844    J-Link Script File: Executing InitTarget()
+T1D84 000:068.384   JTAG selected. Identifying JTAG Chain...
+T1D84 000:069.396   TotalIRLen = ?, IRPrint = 0x..000000000000000000000000
+T1D84 000:069.965   Error: Scanning JTAG chain failed.
+T1D84 000:070.096   Can not attach to CPU. Trying connect under reset.
+T1D84 000:121.765   JTAG selected. Identifying JTAG Chain...
+T1D84 000:122.810   TotalIRLen = ?, IRPrint = 0x..000000000000000000000000
+T1D84 000:123.580   Error: Scanning JTAG chain failed.
+T1D84 000:123.753   Connecting to CPU via connect under reset failed.
+T1D84 000:175.783   InitTarget() end - Took 107ms
+T1D84 000:175.955   Connect failed. Resetting via Reset pin and trying again.
+T1D84 000:237.394   InitTarget() start
+T1D84 000:237.406    J-Link Script File: Executing InitTarget()
+T1D84 000:237.916   JTAG selected. Identifying JTAG Chain...
+T1D84 000:238.892   TotalIRLen = ?, IRPrint = 0x..000000000000000000000000
+T1D84 000:239.377   Error: Scanning JTAG chain failed.
+T1D84 000:239.597   Can not attach to CPU. Trying connect under reset.
+T1D84 000:290.918   JTAG selected. Identifying JTAG Chain...
+T1D84 000:291.951   TotalIRLen = ?, IRPrint = 0x..000000000000000000000000
+T1D84 000:292.428   Error: Scanning JTAG chain failed.
+T1D84 000:292.637   Connecting to CPU via connect under reset failed.
+T1D84 000:343.253   InitTarget() end - Took 105ms
+T1D84 000:343.265 - 275.930ms 
+T1D84 000:345.854 JLINK_Close()
+T1D84 000:350.008 - 4.153ms
+T1D84 000:350.032   
+T1D84 000:350.036   Closed

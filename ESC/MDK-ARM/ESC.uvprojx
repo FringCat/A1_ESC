@@ -337,7 +337,7 @@
               <MiscControls></MiscControls>
               <Define>USE_HAL_DRIVER,STM32G431xx</Define>
               <Undefine></Undefine>
-              <IncludePath>../Core/Inc;../Drivers/STM32G4xx_HAL_Driver/Inc;../Drivers/STM32G4xx_HAL_Driver/Inc/Legacy;../Drivers/CMSIS/Device/ST/STM32G4xx/Include;../Drivers/CMSIS/Include;../../ESC;..\FOC;..\FOC\foc_drv</IncludePath>
+              <IncludePath>../Core/Inc;../Drivers/STM32G4xx_HAL_Driver/Inc;../Drivers/STM32G4xx_HAL_Driver/Inc/Legacy;../Drivers/CMSIS/Device/ST/STM32G4xx/Include;../Drivers/CMSIS/Include;../../ESC;../FOC;../FOC/foc_drv;..\others</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -635,26 +635,6 @@
               <FileName>as5047p.h</FileName>
               <FileType>5</FileType>
               <FilePath>..\others\as5047p.h</FilePath>
-            </File>
-            <File>
-              <FileName>FOC.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\others\FOC.c</FilePath>
-            </File>
-            <File>
-              <FileName>FOC.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\others\FOC.h</FilePath>
-            </File>
-            <File>
-              <FileName>ADRC.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\others\ADRC.c</FilePath>
-            </File>
-            <File>
-              <FileName>ADRC.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\others\ADRC.h</FilePath>
             </File>
           </Files>
         </Group>

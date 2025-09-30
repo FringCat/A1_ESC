@@ -21,7 +21,7 @@
 #include "adc.h"
 
 /* USER CODE BEGIN 0 */
-extern uint16_t I_raw[10];
+
 /* USER CODE END 0 */
 
 ADC_HandleTypeDef hadc1;
@@ -96,7 +96,7 @@ void MX_ADC1_Init(void)
   }
   /* USER CODE BEGIN ADC1_Init 2 */
   // HAL_ADCEx_Calibration_Start(&hadc1,ADC_SINGLE_ENDED);   
-  HAL_ADC_Start_DMA(&hadc1,(uint32_t*)I_raw,2);
+  // HAL_ADC_Start_DMA(&hadc1,(uint32_t*)I_raw,2);
   /* USER CODE END ADC1_Init 2 */
 
 }

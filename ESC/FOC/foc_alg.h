@@ -20,6 +20,7 @@ typedef struct
     float last_output;   // 滤波输出值（上一次滤波后的结果，用于下一次滤波计算）
 }LPF_t;
 
+
 /**
  * @brief PID控制器核心结构体
  * @note 通用PID结构体，适配位置环、速度环、电流环、混合环等所有PID控制需求
@@ -61,7 +62,8 @@ typedef struct
     // float J;           // 转动惯量（注释：可选，速度环PI参数设计，适配负载特性）
     // float B;           // 粘性摩擦系数（注释：可选，速度环前馈，抑制低速抖动）
     float angle_zero;       // 机械角度零点（编码器零位校准值，用于位置控制基准）
-    float angle_el_zero;    // 电角度零点（FOC磁链定向基准，由机械零点×极对数计算）
+    float angle_el_zero;    // 电角度零点（FOC磁链定向基准，由机械零点×极对数计算）     
+    float NLLUT_encoder[128];  //编码器非线性误差查找表
 } Motor_ConfigTypeDef;
 
 /**
@@ -112,23 +114,24 @@ typedef struct
     LPF_t Velocity_LPF;     // 速度滤波器实例（用于平滑Velocity_raw，提升速度反馈质量）
     
     // -------------------------- 编码器角度原始数据（union适配两种读取方式） --------------------------
+    
     union 
     {
-        uint32_t Angle_raw;       // 单个角度原始值（如单次读取编码器数据）
-        uint32_t Angle_raw_dma[10];// DMA批量采集的角度原始数组（用于高频、多组数据滤波）
-    };
-    
+        uint32_t Angle_raw;       // 单个角度原始值
+        uint32_t Angle_raw_dma[10];// DMA批量采集的角度原始数组
+    } AngleData;  // 定义联合体变量（如AngleData）
+
     // -------------------------- 电流ADC原始数据（union适配两种读取方式） --------------------------
     union 
     {
         struct
         {
-            uint32_t IA_raw;       // IA电流ADC原始值（未校准、未转换为实际电流）
+            uint32_t IA_raw;       // IA电流ADC原始值
             uint32_t IB_raw;       // IB电流ADC原始值
             uint32_t IC_raw;       // IC电流ADC原始值
-        }I_raw;                    // 结构化单个读取（便于单独操作某一相）
-        uint32_t I_raw_dma[3];     // DMA批量采集的电流原始数组（3个元素对应IA/IB/IC，高频采集）
-    };
+        }I_raw;                    // 结构化单个读取
+        uint32_t I_raw_dma[3];     // DMA批量采集的电流原始数组
+    } CurrentData;  // 定义联合体变量（如CurrentData）
     // float I_ADC_CONV;    // 注释：可选，电流ADC转换系数（实际电流 = (ADC值 - 偏移) × 转换系数，单位：A/ADC_LSB）
 } Motor_DataTypeDef;
 
@@ -157,7 +160,7 @@ typedef struct
     float (*Cal_Angle)(uint32_t raw); // 角度转换函数（参数：编码器原始值，返回：实际机械角度，单位rad/deg）
 
     // -------------------------- 通用硬件接口 --------------------------
-    void (*Delayms)(uint16_t ms);  // 毫秒级延时函数（用于校准、初始化等待）
+    void (*Delayms)(uint32_t ms);  // 毫秒级延时函数（用于校准、初始化等待）
     float (*Update_dt)(Time_t* time);  // 计算时间差dt函数（参数：Time_t结构体，返回：当前dt值，用于速度计算）
 } Motor_DrvTypeDef;
 
@@ -193,6 +196,7 @@ float Limit_angle_el(float angle_el);  // 电角度限幅（约束在0~2π）
 float Get_angle_el(Motor_HandleTypeDef *motor);  // 获取当前电角度
 float update_angle_el(Motor_HandleTypeDef *motor);  // 更新电角度（机械角→电角度）
 float Calculate_angle_el(float Pole_pairs,float angle,float angle_el_zero);  // 计算电角度（含极对数和零点）
+float update_angle(Motor_HandleTypeDef *motor);
 
 // FOC坐标变换
 float *Calculate_Park_N(float Uq , float Ud , float angle_el);  // Park逆变换（dq→αβ电压）
@@ -206,8 +210,8 @@ float *update_Park(Motor_HandleTypeDef *motor);  // 更新Park变换结果到算
 
 // PWM输出控制
 void update_pwm(Motor_HandleTypeDef *motor);  // 更新PWM（用算法层三相电压输出）
-void set_pwm(Motor_HandleTypeDef *motor,float Ua , float Ub ,float Uc);  // 设置三相PWM（考虑转向）
-void set_pwm_nodir(Motor_HandleTypeDef *motor,float Ua , float Ub ,float Uc);  // 设置三相PWM（不考虑转向）
+void set_pwm(Motor_HandleTypeDef *motor,float Ta , float Tb ,float Tc);  // 设置三相PWM（考虑转向）
+void set_pwm_nodir(Motor_HandleTypeDef *motor,float Ta , float Tb ,float Tc);  // 设置三相PWM（不考虑转向）
 
 // SPWM相关
 void update_spwm(Motor_HandleTypeDef *motor);  // 更新SPWM（用算法层三相电压输出）
@@ -246,7 +250,18 @@ float get_Ia_offset(Motor_HandleTypeDef *motor);  // 获取IA电流偏置
 float get_Ib_offset(Motor_HandleTypeDef *motor);  // 获取IB电流偏置
 float get_Ic_offset(Motor_HandleTypeDef *motor);  // 获取IC电流偏置
 
-void update_pole_pairs_sensor_block(Motor_HandleTypeDef *motor); // 极对数辨识（有传感器阻塞式更新）
-void update_pole_pairs_sensor_nonblock(Motor_HandleTypeDef *motor); // 极对数辨识（有传感器非阻塞式更新）
+//初始化相关
+void update_pole_pairs_sensor_block(Motor_HandleTypeDef *motor);        // 极对数辨识（有传感器，阻塞式更新）
+void update_pole_pairs_sensor_nonblock(Motor_HandleTypeDef *motor);     // 极对数辨识（有传感器，非阻塞式更新）
+
+void update_2DIR_sensor_block(Motor_HandleTypeDef *motor);              //  相线辨识（基于磁编，阻塞式更新）
+void update_2DIR_sensor_nonblock(Motor_HandleTypeDef *motor);           //  相线辨识（基于磁编，非阻塞式更新）
+
+void update_angle_el_zero_sensor_block(Motor_HandleTypeDef *motor);     //  电角度零点校准 （有传感器，阻塞式更新）
+void update_angle_el_zero_sensor_nonblock(Motor_HandleTypeDef *motor);  //  电角度零点校准 （有传感器，非阻塞式更新）
+
+void map_samples_to_lut(float *error_arr, int N_SAMPLES, float *lut_arr, int N_LUT); // 将采样的磁编误差数组映射成非线性插值表数组(NLLUT)
+void update_NLLUT_encoder_sensor_block(Motor_HandleTypeDef *motor);                  // 更新磁编的非线性插值表 （阻塞式更新）
+void update_NLLUT_encoder_sensor_nonblock(Motor_HandleTypeDef *motor);               // 更新磁编的非线性插值表 （非阻塞式更新）
 
 #endif
