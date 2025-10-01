@@ -74,20 +74,20 @@ void stm32_delayms(uint32_t ms)
 
 float stm32_update_dt(Time_t* time)
 {
-	// if(time->ticks == 0)
-	// {
-		time->PastTime = time->ThisTime;
-		time->ThisTime =__HAL_TIM_GET_COUNTER(&htim3);
-		if(time->ThisTime > time->PastTime)
-		{
-            time->dt = (float)(time->ThisTime - time->PastTime)/(170000000.0f/300.0f);
-        }
-        else
-        {
-            time->dt = (float)(65535 - time->PastTime + time->ThisTime)/(170000000.0f/300.0f);
-        }
-	// 	time->ticks = 1 ;
-	// }
+    time->PastTime = time->ThisTime;
+    time->ThisTime =__HAL_TIM_GET_COUNTER(&htim3);
+    if(time->ThisTime > time->PastTime)
+    {
+        time->dt = (float)(time->ThisTime - time->PastTime)/(170000000.0f/300.0f);
+    }
+    else
+    {
+        time->dt = (float)(65535 - time->PastTime + time->ThisTime)/(170000000.0f/300.0f);
+    }
+    // if(time->dt == 0)
+    // {
+    //     time->dt = 0.0001f;
+    // }
 	return  time->dt ;
 }
 
@@ -98,9 +98,9 @@ void foc_init(Motor_HandleTypeDef *motor)
     motor->motor_number = 1; // 设置电机编号
 
     // 初始化时间管理
-    motor->time.ThisTime = 0;
-    motor->time.PastTime = 0;
-    motor->time.dt = 0.0;
+    motor->time.ThisTime = 0.0f;
+    motor->time.PastTime = 0.0f;
+    motor->time.dt = 0.01f;
 
     //初始化电机配置
     motor->MotorConfig.Pole_pairs = 7; // 设置电机极对数

@@ -126,9 +126,11 @@ int main(void)
   /* USER CODE BEGIN 2 */
   foc_init(&motor);
   update_2DIR_sensor_block(&motor);
-  // update_pole_pairs_sensor_block(&motor);
+  update_pole_pairs_sensor_nonblock(&motor);
+
   // ADRC_Init(&ADRC);
   // data_init(&motordata);
+
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -139,9 +141,9 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-    update_angle(&motor);
-    printf("%d,%f\n",motor.MotorConfig.DIR,motor.MotorAlg.angle);
-    motor.MotorDrv.Delayms(1);
+    
+    // printf("%d\n",motor.MotorConfig.Pole_pairs);
+    // motor.MotorDrv.Delayms(1);
   }
   /* USER CODE END 3 */
 }

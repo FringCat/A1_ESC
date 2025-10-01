@@ -762,89 +762,135 @@ float get_Ic_offset(Motor_HandleTypeDef *motor)
 
 void update_pole_pairs_sensor_block(Motor_HandleTypeDef *motor)
 {
-    float angle_start = 0 , angle_end = 0 ;
-    set_svpwm(motor,0.0f, motor->MotorConfig.UMAX*0.5f , 0.0f);
-    motor->MotorDrv.Delayms(2000);
-    angle_start = update_angle(motor);
-    for(int i=0 ; i<10000 ; i++)
+    static float velocity_integral = 0.0f;
+    set_svpwm(motor,motor->MotorConfig.UMAX*0.5f,0.0f, 0.0f);
+    motor->MotorDrv.Delayms(500);
+    for(int i=0 ; i<1000 ; i++)
     {
-        set_svpwm(motor,motor->MotorConfig.UMAX*0.5f,0.0f, Limit_angle_el((float)i*0.001f));
+        update_dt(motor);  //预热dt，防止因初次启动产生的极小dt干扰后面的速度计算
+        update_angle(motor);
+        update_velocity_raw(motor);
+    }
+
+    for(int i=0 ; i<1000 ; i++)
+    {
+        update_dt(motor);  //预热dt，防止因初次启动产生的极小dt干扰后面的速度计算
+        update_angle(motor);
+        update_velocity_raw(motor);
+        velocity_integral += motor->MotorData.Velocity_raw*motor->time.dt;
+        // printf("%f,%f,%f,%f\n",(angle_end - angle_start),velocity_integral,motor->MotorData.Velocity_raw,motor->MotorAlg.angle);
+        set_svpwm(motor,motor->MotorConfig.UMAX*0.5f,0.0f, Limit_angle_el((float)i*0.01f));
         motor->MotorDrv.Delayms(1);
     }
-    motor->MotorDrv.Delayms(2000);
-    angle_end = update_angle(motor);
-    motor->MotorConfig.Pole_pairs = (uint32_t)round(myabs((float)(10000*0.001f)/(angle_end - angle_start)));
-    set_svpwm(motor,0.0f, 0.0f , 0.0f);
+    motor->MotorDrv.Delayms(500);
+
+    motor->MotorConfig.Pole_pairs = (uint32_t)round(myabs((float)(1000*0.01f)/(velocity_integral)));
+    // printf("%d,%f\n",motor->MotorConfig.Pole_pairs,(myabs((float)(1000*0.01f)/(velocity_integral))));
+    // printf("%f,%f,%f,%f\n",(angle_end - angle_start),velocity_integral,motor->MotorData.Velocity_raw,motor->MotorAlg.angle);
+    set_svpwm(motor,0.0f, 0.0f , 0.0f); 
 }
 
 void update_pole_pairs_sensor_nonblock(Motor_HandleTypeDef *motor)
 {
-    static float angle_start = 0 , angle_end = 0 ;
+    static int flag = 0;
+    static float angle_start = 0;
+    static float angle_end = 0;
+    
+    float velocity_target = 3.0f; 
+    float time_init = 0.5f;
+    float time_prep = 1.0f;
+    float time_process = 5.0f;
+
     static uint8_t state = 0 ;
     static float total_time = 0 ;
+    static float velocity_integral = 0.0f;
 
-    total_time += get_dt(motor);
-    if(total_time < 2.0f)
+    if(flag == 0)
     {
-        state = 0;
-    }
-    else if(total_time >= 2.0f && total_time < 4.0f)
-    {
-        state = 1;
-    }
-    else if(total_time >= 4.0f && total_time < 14.0f)
-    {
-        state = 2;
-    }
-    else if(total_time >= 14.0f)
-    {
-        state = 3;
-    }
-
-    switch (state)
-    {
-        case 0:
+        total_time += update_dt(motor);
+        update_angle(motor);
+        update_velocity_raw(motor);
+        if(total_time < time_init)
         {
-            set_svpwm(motor,0.0f, 0.0f , 0.0f);
-        }break;
-        case 1:
-        {
-            set_svpwm(motor,0.0f, motor->MotorConfig.UMAX*0.5f , 0.0f);
-            angle_start = update_angle(motor);
-        }break;
-        case 2:
-        {
-            set_svpwm(motor,motor->MotorConfig.UMAX*0.5f ,0.0f , Limit_angle_el((total_time - 4.0f)*1.0f));
-        }break;
-        case 3:
-        {
-            angle_end = update_angle(motor);
-            motor->MotorConfig.Pole_pairs = (uint32_t)round(myabs((float)(10.0f)/(angle_end - angle_start)));
-            set_svpwm(motor,0.0f, 0.0f , 0.0f);
+            state = 0;
         }
-        default:
+        else if(total_time >= time_init && total_time < (time_init+time_prep))
         {
-            /* 打印报错信息 */
-        }break;
+            state = 1;
+        }
+        else if(total_time >= (time_init+time_prep) && total_time < (time_init+time_prep+time_process))
+        {
+            state = 2;
+        }
+        else if(total_time >= (time_init+time_prep+time_process))
+        {
+            state = 3;
+        }
+        
+        switch (state)
+        {
+            case 0:
+            {
+                set_svpwm(motor,0.0f, 0.0f , 0.0f);
+            }break;
+            case 1:
+            {
+                set_svpwm(motor, motor->MotorConfig.UMAX*0.5f,0.0f,0.0f);
+                angle_start = motor->MotorAlg.angle;
+            }break;
+            case 2:
+            {
+                velocity_integral += motor->MotorData.Velocity_raw*motor->time.dt;
+                set_svpwm(motor,motor->MotorConfig.UMAX*0.5f,0.0f, Limit_angle_el((float)velocity_target*(total_time-time_init-time_prep)));
+                // motor->MotorDrv.Delayms(1);
+                angle_end = motor->MotorAlg.angle;
+            }break;
+            case 3:
+            {
+                angle_end = motor->MotorAlg.angle;
+                motor->MotorConfig.Pole_pairs = (uint32_t)round(myabs((float)velocity_target*(total_time-time_init-time_prep)/(velocity_integral)));
+                set_svpwm(motor,0.0f, 0.0f , 0.0f);
+                // total_time = 0.0f;
+                // velocity_integral = 0.0f;
+                flag = 1;
+                // printf("%d\n",motor->MotorConfig.Pole_pairs);
+            }
+            default:
+            {
+                /* 打印报错信息 */
+            }break;
+        }
     }
+    printf("%d\n",motor->MotorConfig.Pole_pairs);
+
 }
 
 void update_2DIR_sensor_block(Motor_HandleTypeDef *motor)
 {
-    // float angle_start = 0 , angle_end = 0 ;
-    float velocity_integral = 0;
-    set_svpwm(motor,0.0f, motor->MotorConfig.UMAX*0.5f , 0.0f);
-    motor->MotorDrv.Delayms(500);
-    set_svpwm(motor,motor->MotorConfig.UMAX*0.5f, 0.0f , 0.0f);
-    motor->MotorDrv.Delayms(500);
+    float velocity_target = 0.01f; 
+    float velocity_integral = 0.0f;
+
+    for(int i=0 ; i<1000 ; i++)
+    {
+        update_dt(motor);  //预热dt，防止因初次启动产生的极小dt干扰后面的速度计算
+        update_angle(motor);
+        update_velocity_raw(motor);
+        set_svpwm(motor,0.001f*i*motor->MotorConfig.UMAX*0.5f, motor->MotorConfig.UMAX*0.5f - 0.001f*i*motor->MotorConfig.UMAX*0.5f , 0.0f);
+        motor->MotorDrv.Delayms(1);
+    }
+
     for(int i=0 ; i<2000 ; i++)
     {
         update_dt(motor);
         update_angle(motor);
         update_velocity_raw(motor);
-        set_svpwm(motor,motor->MotorConfig.UMAX*0.5f,3.1f, Limit_angle_el((float)i*0.01f));
-        velocity_integral += motor->MotorData.Velocity_raw ;
-        printf("%f,%f,%f,%f\n",(float)i*0.01f,Limit_angle_el((float)i*0.1f),motor->MotorAlg.angle,motor->MotorData.Velocity_raw);
+        // if(myabs(motor->MotorData.Velocity_raw) > 2*velocity_target)
+        // {
+        //     motor->MotorData.Velocity_raw = 0.0f ;
+        // }
+        set_svpwm(motor,motor->MotorConfig.UMAX*0.5f,3.1f, Limit_angle_el((float)i*velocity_target));
+        velocity_integral += motor->MotorData.Velocity_raw;
+        // printf("%f,%f\n",motor->MotorData.Velocity_raw,velocity_integral);
         motor->MotorDrv.Delayms(1);
     }
     motor->MotorDrv.Delayms(500);
@@ -866,24 +912,32 @@ void update_2DIR_sensor_block(Motor_HandleTypeDef *motor)
 
 void update_2DIR_sensor_nonblock(Motor_HandleTypeDef *motor)
 {
-    static float angle_start = 0 , angle_end = 0 ;
-    static uint8_t state = 0 ;
-    static float total_time = 0 ;
+    float velocity_target = 10.0f; 
+    float time_init = 0.5f;
+    float time_prep = 1.0f;
+    float time_process = 2.0f;
+    // float time_finish = 0.5f;
 
-    total_time += get_dt(motor);
-    if(total_time < 0.5f)
+    static uint8_t state = 0 ;
+    static float total_time = 0.0f ;
+    static float velocity_integral = 0.0f;
+
+    total_time += update_dt(motor); //预热
+    update_angle(motor);
+    update_velocity_raw(motor);
+    if(total_time < time_init)
     {
         state = 0;
     }
-    else if(total_time >= 0.5f && total_time < 1.0f)
+    else if(total_time >= time_init && total_time < (time_init+time_prep))
     {
         state = 1;
     }
-    else if(total_time >= 1.0f && total_time < 11.0f)
+    else if(total_time >= (time_init+time_prep) && total_time < (time_init+time_prep+time_process))
     {
         state = 2;
     }
-    else if(total_time >= 11.0f)
+    else if(total_time >= (time_init+time_prep+time_process))
     {
         state = 3;
     }
@@ -896,21 +950,21 @@ void update_2DIR_sensor_nonblock(Motor_HandleTypeDef *motor)
         }break;
         case 1:
         {
-            set_svpwm(motor,0.0f, motor->MotorConfig.UMAX*0.5f , 0.0f);
-            angle_start = update_angle(motor);
+            float K =  (total_time-time_init)/time_process;
+            set_svpwm(motor,0.0f,K*motor->MotorConfig.UMAX*0.5f, 0.0f);
         }break;
         case 2:
         {
-            set_svpwm(motor,motor->MotorConfig.UMAX*0.5f,0.0f, Limit_angle_el((total_time - 1.0f)*1.0f));
+            set_svpwm(motor,motor->MotorConfig.UMAX*0.5f,3.0f, Limit_angle_el((float)(total_time-time_init-time_prep)*velocity_target));
+            velocity_integral += motor->MotorData.Velocity_raw;
         }break;
         case 3:
         {
-            angle_end = update_angle(motor);
-            if(angle_end-angle_start>0)
+            if(velocity_integral>0)
             {
                 motor->MotorConfig.DIR = 1;
             }
-            else if(angle_end-angle_start<0)
+            else if(velocity_integral<0)
             {
                 motor->MotorConfig.DIR = 2;
             }
@@ -919,12 +973,15 @@ void update_2DIR_sensor_nonblock(Motor_HandleTypeDef *motor)
                 /*传感器异常报错*/
             }
             set_svpwm(motor,0.0f, 0.0f , 0.0f);
+            total_time = 0.0f;
+            velocity_integral = 0.0f;
         }
         default:
         {
             /* 打印报错信息 */
         }break;
     }
+    // printf("%f,%d,%f,%f,%f\n",velocity_integral,motor->MotorConfig.DIR,motor->MotorData.Velocity_raw,motor->MotorAlg.angle,motor->time.dt);
 }
 
 void update_angle_el_zero_sensor_block(Motor_HandleTypeDef *motor)

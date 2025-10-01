@@ -9,9 +9,9 @@
  */
 typedef struct
 {
-    uint32_t ThisTime;    // 当前时刻的时间戳（如定时器当前计数值/系统时间）
-    uint32_t PastTime;    // 上一时刻的时间戳（用于计算时间差）
-    double dt;            // 时间差（ThisTime - PastTime，单位：s/ms，需根据计时基准统一）
+    volatile uint32_t ThisTime;    // 当前时刻的时间戳（如定时器当前计数值/系统时间）
+    volatile uint32_t PastTime;    // 上一时刻的时间戳（用于计算时间差）
+    volatile double dt;            // 时间差（ThisTime - PastTime，单位：s/ms，需根据计时基准统一）
 }Time_t;
 
 typedef struct 
